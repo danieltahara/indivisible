@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for member in members %}
+<p><a href="{{member['_url']}}">{{member['last_name']}}, {{member['first_name']}}</a></p>
+{% endfor %}
+{% endblock %}

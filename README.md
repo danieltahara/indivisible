@@ -24,6 +24,7 @@ virtualenv venv
 pip install requests
 pip install us
 pip install Flask
+pip install flask-bootstrap
 ~~~
 
 * Request an API key from ProPublica: https://www.propublica.org/datastore/api/propublica-congress-api

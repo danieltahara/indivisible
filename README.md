@@ -34,5 +34,5 @@ cat "PASTE_API_KEY_HERE" > .api
 
 ## How to use:
 ~~~
-python indivisible.py
+env FLASK_DEBUG=1 FLASK_APP=indivisible.py flask run
 ~~~

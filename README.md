@@ -6,12 +6,24 @@ https://www.propublica.org/datastore/apis
 
 Candidate focus inspired by: https://www.propublica.org/article/election-databot-sources
 
-## Pre-requisites:
+## Prerequisites:
 * You have python installed on your computer (comes by default), as well as the following libraries:
 ~~~
 sudo apt-get install python-pip
-sudo pip install requests
-sudo pip install us
+sudo apt-get install python-virtualenv
+~~~
+
+* You will need to create and activate a virtualenv for the project as follows:
+~~~
+virtualenv venv
+. venv/bin/activate
+~~~
+
+* Then install the following:
+~~~
+pip install requests
+pip install us
+pip install Flask
 ~~~
 
 * Request an API key from ProPublica: https://www.propublica.org/datastore/api/propublica-congress-api

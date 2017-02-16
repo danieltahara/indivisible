@@ -1,5 +1,5 @@
 from collections import defaultdict
-import propublica
+from datasources import propublica
 
 class Congress(object):
     SENATE = 'senate'

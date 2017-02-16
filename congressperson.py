@@ -1,4 +1,4 @@
-import congress
+from datasources import propublica
 
 class Congressperson(object):
     def __init__(self, member):

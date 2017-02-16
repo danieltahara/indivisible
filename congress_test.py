@@ -1,7 +1,7 @@
 import unittest
 
-import propublica
 import congress
+from datasources import propublica
 
 class TestCongress(unittest.TestCase):
     def setUp(self):

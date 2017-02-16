@@ -57,6 +57,7 @@ class ProPublica(object):
             state: state,
             district: district,
         }
+        # https://pypi.python.org/pypi/us
         # TODO: parametrize url
         if chamber == 'senate':
             resp = self._get("{chamber}/{state}/current.json".format(**params))

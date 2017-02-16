@@ -1,7 +1,8 @@
-import requests
 import httplib
 import json
+import requests
 from urlparse import urljoin
+import us
 
 class ProPublica(object):
     version = "v1"
@@ -25,8 +26,7 @@ class ProPublica(object):
         @param id: member-id
         @return: member
         """
-        # TODO: parametrize url
-        results = self._get("members/{}.json".format(id))
+        results = self._get("members/{id}.json".format(id=id))
         return results[0] if results else None
 
     def get_members(self, congress, chamber):
@@ -38,35 +38,39 @@ class ProPublica(object):
         @param chamber: HOUSE or SENATE
         @return: list of members
         """
-        results = self._get("{congress}/{chamber}/members.json".format(
-            congress=congress, chamber=chamber))
+        params = {
+            "congress": congress,
+            "chamber": chamber,
+        }
+        results = self._get("{congress}/{chamber}/members.json".format(**params))
         return results[0]['members'] if results else []
 
     def get_members_by_location(self, chamber, state, district=None):
         """
-        Get members by chamber, state, and district.
+        Get current members by chamber, state, and district.
 
         @param chamber: SENATE or HOUSE
         @param state: two-letter state abbreviation
         @param district: (optional) house district
         @return: members
         """
-
+        state = us.states.lookup(unicode(state))
+        if state is None:
+            return []
         params = {
-            chamber: chamber,
-            state: state,
-            district: district,
+            "chamber": chamber,
+            "state": state.abbr,
+            "district": district,
         }
         # https://pypi.python.org/pypi/us
-        # TODO: parametrize url
         if chamber == 'senate':
-            resp = self._get("{chamber}/{state}/current.json".format(**params))
+            results = self._get("members/{chamber}/{state}/current.json".format(**params))
         else:
-            resp = self._get("{chamber}/{state}/{district}/current.json".format(**params))
+            results = self._get("members/{chamber}/{state}/{district}/current.json".format(**params))
 
         return results or []
 
-    def _get(self, path, headers={}):
+    def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(self.version), path)
         headers = headers.copy()
         headers.update(self._get_base_headers())
@@ -75,7 +79,7 @@ class ProPublica(object):
             return None
         else:
             results = resp.json()
-            if results['status'] == 'ERROR':
+            if results['status'] == 'ERROR' or results['status'] == '404':
                 return None
             else:
                 return results['results']

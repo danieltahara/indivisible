@@ -62,13 +62,24 @@ class ProPublica(object):
             "state": state.abbr,
             "district": district,
         }
-        # https://pypi.python.org/pypi/us
         if chamber == 'senate':
             results = self._get("members/{chamber}/{state}/current.json".format(**params))
         else:
-            results = self._get("members/{chamber}/{state}/{district}/current.json".format(**params))
+            results = self._get("members/{chamber}/{state}/{district}/current.json".format(
+                **params))
 
         return results or []
+
+    def get_member_votes(self, id):
+        """
+        Get votes for given memer
+
+        @param id: member-id
+        @return: votes
+        """
+        results = self._get("members/{id}/votes.json".format(id=id))
+        return results[0]['votes'] if results else []
+
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(self.version), path)

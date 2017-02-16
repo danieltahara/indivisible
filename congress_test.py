@@ -1,27 +1,31 @@
+import unittest
+
 import propublica
 import congress
 
-def test_get_members():
-    cg = congress.Congress(115)
-    cg.get_members(cg.SENATE)
+class TestCongress(unittest.TestCase):
+    def setUp(self):
+        self.cg = congress.Congress(115)
 
-def test_search_members():
-    cg = congress.Congress(115)
+    def test_get_members(self):
+        members = self.cg.get_members(self.cg.SENATE)
+        self.assertEqual(len(members), 101) # Luther Strange replaced Sessions
 
-    # Senate
-    print cg.search_members("schumer")
-    # Full name
-    print cg.search_members("charles schumer")
-    # Unknown
-    print cg.search_members("foobarbaz")
-    # House
-    print cg.search_members("lowey")
-    # Multiple results
-    print cg.search_members("smith")
+    def test_search_members(self):
+        # House
+        self.assertEqual(len(self.cg.search_members("lowey")), 1)
 
+        # Senate
+        schumer = self.cg.search_members("schumer")[0]
+        schumerFull = self.cg.search_members("charles schumer")[0]
+        self.assertEqual(schumer, schumerFull)
+
+        # Unknown
+        self.assertEqual(len(self.cg.search_members("foobarbaz")), 0)
+
+        # Multiple results
+        self.assertEqual(len(self.cg.search_members("smith")), 5)
 
 if __name__ == '__main__':
     propublica.ProPublica.load_api_key()
-
-    test_get_members()
-    test_search_members()
+    unittest.main()

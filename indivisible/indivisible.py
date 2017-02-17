@@ -11,6 +11,7 @@ from urlparse import urljoin
 import us
 
 from datasources.eventregistry import EventRegistry
+from datasources.gpo import GPO
 from datasources.propublica import ProPublica
 from models.congress import Congress
 from models.congressperson import Congressperson
@@ -21,6 +22,8 @@ Bootstrap(app)
 
 pp = ProPublica(app.config['PROPUBLICA_API_KEY'])
 er = EventRegistry(app.config['EVENT_REGISTRY_API_KEY'])
+gpo = GPO(app.config['GPO_DATA_PATH'])
+cg = Congress(pp, er, gpo, 115)
 
 @app.route('/')
 def main():
@@ -30,7 +33,6 @@ def main():
 @app.route('/members/search')
 def search_members():
     name = request.args.get('q')
-    cg = Congress(pp, er, 115)
     members = cg.search_members(name)
     return render_template('members_search.html', members=members)
 
@@ -38,14 +40,13 @@ def search_members():
 def search_members_by_location():
     state = request.args.get('state')
     district = request.args.get('district')
-    cg = Congress(pp, er, 115)
     members = cg.get_senators(state)
     members.extend(cg.get_representative(state, district))
     return render_template('members_search.html', members=members)
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.from_id(pp, er, id)
+    cp = Congressperson.from_id(pp, er, gpo, id)
     return render_template('member.html', member=cp)
 
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')

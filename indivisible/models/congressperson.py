@@ -1,16 +1,18 @@
 import feedparser
+import json
 
 class Congressperson(object):
     @classmethod
-    def from_id(cls, pp, er, id):
+    def from_id(cls, pp, er, gpo, id):
         member = pp.get_member_by_id(id)
         if member is None:
             return None
-        return cls(pp, er, member)
+        return cls(pp, er, gpo, member)
 
-    def __init__(self, pp, er, member):
+    def __init__(self, pp, er, gpo, member):
         self.pp = pp
         self.er = er
+        self.gpo = gpo
         self.member = member
 
     def get_id(self):
@@ -51,6 +53,9 @@ class Congressperson(object):
 
     def get_committees(self):
         return self.member['roles'][0]['committees']
+
+    def get_offices(self):
+        return self.gpo.get_offices(self.get_last_name(), self.get_first_name())
 
     def get_votes(self, last_n=0):
         """

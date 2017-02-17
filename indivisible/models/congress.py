@@ -6,9 +6,10 @@ class Congress(object):
     SENATE = 'senate'
     HOUSE = 'house'
 
-    def __init__(self, pp, er, congress):
+    def __init__(self, pp, er, gpo, congress):
         self.pp = pp
         self.er = er
+        self.gpo = gpo
         self.congress = congress
 
     def get_members(self, chamber):
@@ -36,7 +37,7 @@ class Congress(object):
         @param state: can be abbreviation or full name
         """
         members = self.pp.get_members_by_location(self.SENATE, state)
-        return [Congressperson.from_id(self.pp, self.er, member['id']) for member in members]
+        return [Congressperson.from_id(self.pp, self.er, self.gpo, member['id']) for member in members]
 
     def get_representative(self, state, district):
         """
@@ -46,7 +47,7 @@ class Congress(object):
         @param district: congressional district
         """
         members = self.pp.get_members_by_location(self.HOUSE, state, district)
-        return [Congressperson.from_id(self.pp, self.er, member['id']) for member in members]
+        return [Congressperson.from_id(self.pp, self.er, self.gpo, member['id']) for member in members]
 
     def search_members(self, name):
         """
@@ -73,4 +74,4 @@ class Congress(object):
             else:
                 members.extend(by_first[first])
 
-        return [Congressperson.from_id(self.pp, self.er, member['id']) for member in members]
+        return [Congressperson.from_id(self.pp, self.er, self.gpo, member['id']) for member in members]

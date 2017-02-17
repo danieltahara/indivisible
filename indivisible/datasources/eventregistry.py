@@ -1,4 +1,3 @@
-import httplib
 import json
 import requests
 from urlparse import urljoin

@@ -4,12 +4,19 @@
 {{ super() }}
 <div class="container">
   <h3>Search Results:</h3>
-  {% for member in members %}
-  <p>
-    <a href="{{url_for('get_member', id=member.get_id())}}">
-      {{member.get_last_name()}}, {{member.get_first_name()}}
-    </a>
-  </p>
-  {% endfor %}
+  <table class="table table-striped">
+    <thead>
+      <tr><td>Name (last, first)</td></tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+      <tr>
+        <td><a href="{{url_for('get_member', id=member.get_id())}}">
+          {{member.get_last_name()}}, {{member.get_first_name()}}
+        </a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

@@ -18,33 +18,58 @@
 
       <div class="tab-content">
         <div class="member-contact tab-pane fade in active" id="contact">
-          {% for o in member.get_offices() -%}
-          {{macros.render_office_info(o)}}
-          {% endfor %}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Location</th>
+                <th>Phone</th>
+                <th>Staff</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in member.get_offices() -%}
+              {{macros.render_office_info(o)}}
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
 
         <div class="member-recent-votes tab-pane fade" id="votes">
-          <div class="row">
-            <div class="col-md-2"><em>Date</em></div>
-            <div class="col-md-2"><em>Question</em></div>
-            <div class="col-md-7"><em>Description</em></div>
-            <div class="col-md-1"><em>Position</em></div>
-          </div>
-          {% for vote in member.get_votes(20) -%}
-          {{macros.render_vote(vote)}}
-          {%- endfor %}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Question</th>
+                <th>Description</th>
+                <th>Position</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for vote in member.get_votes(20) -%}
+              {{macros.render_vote(vote)}}
+              {%- endfor %}
+          </tbodY>
+          </table>
         </div>
 
         <div class="tab-pane fade" id="statements">
-          {% for item in member.get_statements(10) -%}
-          {{macros.render_rss(item)}}
-          {%- endfor %}
+          <table class="table table-striped">
+            <tbody>
+              {% for item in member.get_statements(10) -%}
+              {{macros.render_rss(item)}}
+              {%- endfor %}
+            </tbody>
+          </table>
         </div>
 
-        <div class="member-recent-events tab-pane fade" id="events">
-          {% for event in member.get_events(10) -%}
-          <div class="row">{{macros.render_event(event)}}</div>
-          {%- endfor %}
+        <div class="tab-pane fade" id="events">
+          <table class="table table-striped">
+            <tbody>
+              {% for event in member.get_events(10) -%}
+              {{macros.render_event(event)}}
+              {%- endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

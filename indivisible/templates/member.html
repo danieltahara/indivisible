@@ -1,7 +1,31 @@
+{% import "macros.html" as macros %}
 {% extends "base.html" %}
 
 {% block content %}
-<pre>
-{{ json_pretty(data) }}
-</pre>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row"><h2>{{member.get_name()}}</h2></div>
+
+      <div class="row member-profile">
+        <h3>Profile</h3>
+        {{macros.print_key_values(member.to_dict(), "col-md-2", "col-md-8")}}
+      </div>
+
+      <div class="row member-recent-votes">
+        <h3>Recent Votes</h3>
+        {% for vote in member.get_recent_votes(10) -%}
+        <div>{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
+        {%- endfor %}
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <a class="twitter-timeline" href="https://twitter.com/{{member.get_twitter_handle()}}">
+        Twitter Feed
+      </a>
+      <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
+  </div>
+</div>t
 {% endblock %}

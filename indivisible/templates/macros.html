@@ -1,0 +1,10 @@
+{% macro print_key_values(dict, key_class, val_class) -%}
+{% for key, value in dict.iteritems() %}
+<div class="row">
+  {% if not value is mapping %}
+  <div class={{key_class}}>{{key}}:</div>
+  <div class={{val_class}}>{{value}}</div>
+  {% endif %}
+</div>
+{% endfor %}
+{%- endmacro %}

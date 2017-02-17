@@ -1,0 +1,4 @@
+.member-profile .row, .member-recent-votes .row {
+  margin-bottom: 3px;
+  border-bottom: 1px solid #BBB;
+}

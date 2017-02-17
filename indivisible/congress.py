@@ -1,4 +1,6 @@
 from collections import defaultdict
+
+from congressperson import Congressperson
 from datasources import propublica
 
 class Congress(object):
@@ -28,10 +30,23 @@ class Congress(object):
         return by_name
 
     def get_senators(self, state):
-        pass
+        """
+        Get Senators for state
 
-    def get_congressperson(self, state, district):
-        pass
+        @param state: can be abbreviation or full name
+        """
+        members = self.pp.get_members_by_location(self.SENATE, state)
+        return [Congressperson.from_id(member['id']) for member in members]
+
+    def get_representative(self, state, district):
+        """
+        Get House Rep for state and district
+
+        @param state: can be abbreviation or full name
+        @param district: congressional district
+        """
+        members = self.pp.get_members_by_location(self.HOUSE, state, district)
+        return [Congressperson.from_id(member['id']) for member in members]
 
     def search_members(self, name):
         """
@@ -58,4 +73,4 @@ class Congress(object):
             else:
                 members.extend(by_first[first])
 
-        return members
+        return [Congressperson.from_id(member['id']) for member in members]

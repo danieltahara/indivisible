@@ -30,7 +30,7 @@ pip install flask-bootstrap
 * Request an API key from ProPublica: https://www.propublica.org/datastore/api/propublica-congress-api
 * Save the API key in a local file named ".api":
 ~~~
-cat "PASTE_API_KEY_HERE" > .api
+echo "PASTE_API_KEY_HERE" > .api
 ~~~
 
 ## How to use:

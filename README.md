@@ -6,7 +6,7 @@ https://www.propublica.org/datastore/apis
 
 Candidate focus inspired by: https://www.propublica.org/article/election-databot-sources
 
-## Prerequisites:
+## Setup:
 * You have python installed on your computer (comes by default), as well as the following libraries:
 ~~~
 sudo apt-get install python-pip
@@ -19,21 +19,20 @@ virtualenv venv
 . venv/bin/activate
 ~~~
 
-* Then install the following:
+* Then install the dependencies:
 ~~~
-pip install requests
-pip install us
-pip install Flask
-pip install flask-bootstrap
+pip install -r requirements.txt
 ~~~
 
 * Request an API key from ProPublica: https://www.propublica.org/datastore/api/propublica-congress-api
-* Save the API key in a local file named ".api":
+* Save the API key in a local file:
 ~~~
-echo "PASTE_API_KEY_HERE" > .api
+echo 'PROPUBLICA_API_KEY = "PASTE_API_KEY_HERE"' > indivisible.cfg
 ~~~
 
-## How to use:
+## How to run:
 ~~~
-env FLASK_DEBUG=1 FLASK_APP=indivisible.py flask run
+pushd indivisible
+env PYTHONPATH=. CONFIG=/path/to/config FLASK_DEBUG=1 FLASK_APP=indivisible.py flask run
+popd
 ~~~

@@ -7,17 +7,12 @@ import us
 class ProPublica(object):
     version = "v1"
 
-    @classmethod
-    def load_api_key(cls):
-        with open('.api', 'r') as f:
-            cls.key = f.read().rstrip()
-
     @staticmethod
     def get_base_url(version):
         return "https://api.propublica.org/congress/{}/".format(version)
 
-    def __init__(self):
-        pass
+    def __init__(self, key):
+        self.key = key
 
     def get_member_by_id(self, id):
         """

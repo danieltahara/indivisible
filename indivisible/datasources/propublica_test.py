@@ -1,10 +1,10 @@
 import unittest
 
-import propublica
+from propublica import ProPublica
 
 class TestPropublica(unittest.TestCase):
     def setUp(self):
-        self.pp = propublica.ProPublica()
+        self.pp = ProPublica()
 
     def test_get_member_by_id(self):
         member = self.pp.get_member_by_id("A000360")

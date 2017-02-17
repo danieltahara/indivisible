@@ -1,14 +1,13 @@
 from collections import defaultdict
 
 from congressperson import Congressperson
-from datasources import propublica
 
 class Congress(object):
     SENATE = 'senate'
     HOUSE = 'house'
 
-    def __init__(self, congress):
-        self.pp = propublica.ProPublica()
+    def __init__(self, pp, congress):
+        self.pp = pp
         self.congress = congress
 
     def get_members(self, chamber):

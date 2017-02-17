@@ -1,16 +1,13 @@
-from datasources import propublica
-from datasources import twitter
-
 class Congressperson(object):
     @classmethod
-    def from_id(cls, id):
-        member = propublica.ProPublica().get_member_by_id(id)
+    def from_id(cls, pp, id):
+        member = pp.get_member_by_id(id)
         if member is None:
             return None
-        return cls(member)
+        return cls(pp, member)
 
-    def __init__(self, member):
-        self.pp = propublica.ProPublica()
+    def __init__(self, pp, member):
+        self.pp = pp
         self.member = member
 
     def get_id(self):

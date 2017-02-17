@@ -8,14 +8,15 @@ from flask_bootstrap import Bootstrap
 import json
 import us
 
-from datasources import propublica
+from datasources.propublica import ProPublica
 from models.congress import Congress
 from models.congressperson import Congressperson
 
 app = Flask(__name__)
+app.config.from_envvar('CONFIG')
 Bootstrap(app)
 
-propublica.ProPublica.load_api_key()
+pp = ProPublica(app.config['PROPUBLICA_API_KEY'])
 
 @app.route('/')
 def main():
@@ -25,7 +26,7 @@ def main():
 @app.route('/members/search')
 def search_members():
     name = request.args.get('q')
-    cg = Congress(115)
+    cg = Congress(pp, 115)
     members = cg.search_members(name)
     return render_template('members_search.html', members=members)
 
@@ -33,19 +34,19 @@ def search_members():
 def search_members_by_location():
     state = request.args.get('state')
     district = request.args.get('district')
-    cg = Congress(115)
+    cg = Congress(pp, 115)
     members = cg.get_senators(state)
     members.extend(cg.get_representative(state, district))
     return render_template('members_search.html', members=members)
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.from_id(id)
+    cp = Congressperson.from_id(pp, id)
     return render_template('member.html', member=cp)
 
 @app.route('/members/<id>/votes')
 def get_votes(id):
-    cp = Congressperson(id)
+    cp = Congressperson(pp, id)
     last_n = int(request.args.get('last', 0))
     votes = cp.get_recent_votes(last_n)
     return render_template('json.html', data=votes)

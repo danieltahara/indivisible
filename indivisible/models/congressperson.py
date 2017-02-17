@@ -1,13 +1,14 @@
 class Congressperson(object):
     @classmethod
-    def from_id(cls, pp, id):
+    def from_id(cls, pp, er, id):
         member = pp.get_member_by_id(id)
         if member is None:
             return None
-        return cls(pp, member)
+        return cls(pp, er, member)
 
-    def __init__(self, pp, member):
+    def __init__(self, pp, er, member):
         self.pp = pp
+        self.er = er
         self.member = member
 
     def get_id(self):
@@ -59,8 +60,15 @@ class Congressperson(object):
         votes = self.pp.get_member_votes(self.get_id())
         return votes[:last_n] if last_n > 0 else votes
 
-    def get_recent_tweets(self):
-        handle = self.member['twitter_account']
+    def get_events(self, last_n=0):
+        """
+        Get new events related to congressperson using EventRegistry API
+
+        @param last_n: if > 0, limit on number of votes to return. Else returns 100.
+        @return: Votes by congressperson.
+        """
+        events = self.er.get_events(self.get_name())
+        return events[:last_n] if last_n > 0 else events
 
     def get_calendar(self):
         pass

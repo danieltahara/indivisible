@@ -25,9 +25,11 @@ pip install -r requirements.txt
 ~~~
 
 * Request an API key from ProPublica: https://www.propublica.org/datastore/api/propublica-congress-api
-* Save the API key in a local file:
+* Request an API key from Event Registry: https://www.eventregistry.org
+* Save the API keys in a local file:
 ~~~
-echo 'PROPUBLICA_API_KEY = "PASTE_API_KEY_HERE"' > indivisible.cfg
+PROPUBLICA_API_KEY="PASTE_API_KEY_HERE"
+EVENT_REGISTRY_API_KEY="PASTE_API_KEY_HERE"
 ~~~
 
 ## How to run:

@@ -9,6 +9,7 @@
       <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
           <li><a data-toggle="tab" href="#votes">Recent Votes</a></li>
+          <li><a data-toggle="tab" href="#events">Recent News</a></li>
       </ul>
 
       <div class="tab-content">
@@ -18,6 +19,12 @@
 
         <div class="member-recent-votes tab-pane fade" id="votes">
           {% for vote in member.get_recent_votes(10) -%}
+          <div class="row">{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
+          {%- endfor %}
+        </div>
+
+        <div class="member-recent-events tab-pane fade" id="events">
+          {% for vote in member.get_events(10) -%}
           <div class="row">{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
           {%- endfor %}
         </div>

@@ -1,7 +1,6 @@
 appdirs==1.4.0
 click==6.7
 dominate==2.3.1
-eventregistry==6.1.6
 Flask==0.12
 Flask-Bootstrap==3.3.7.1
 itsdangerous==0.24

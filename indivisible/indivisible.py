@@ -8,9 +8,9 @@ from flask_bootstrap import Bootstrap
 import json
 import us
 
-from congress import Congress
-from congressperson import Congressperson
 from datasources import propublica
+from models.congress import Congress
+from models.congressperson import Congressperson
 
 app = Flask(__name__)
 Bootstrap(app)

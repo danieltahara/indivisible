@@ -59,6 +59,11 @@ def get_committee(chamber, code):
     return redirect(
         urljoin('https://www.govtrack.us/congress/committees/', code), 302)
 
+@app.route('/events/<uri>')
+def get_event(uri):
+    url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles".format(uri=uri)
+    return redirect(url, 302)
+
 @app.context_processor
 def add_utilities():
     def json_pretty(arg):

@@ -41,8 +41,8 @@
         </div>
 
         <div class="member-recent-events tab-pane fade" id="events">
-          {% for vote in member.get_events(10) -%}
-          <div class="row">{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
+          {% for event in member.get_events(10) -%}
+          <div class="row">{{macros.render_event(event)}}</div>
           {%- endfor %}
         </div>
       </div>

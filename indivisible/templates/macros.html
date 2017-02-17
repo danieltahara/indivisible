@@ -57,6 +57,22 @@
 </div>
 {%- endmacro %}
 
+{% macro render_event(event) -%}
+<div class="row">
+  <div class="col-md-2">{{event['eventDate']}}</div>
+  <div class="col-md-10">
+    <div class="row">
+      <a href={{url_for('get_event', uri=event['uri'])}}>{{event['title']['eng']}}</a>
+    </div>
+    <div class="row">
+      {% for c in event['categories'] -%}
+      <div class="row">{{c['label']}}</div>
+      {%- endfor %}
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
 {% macro render_rss(item) -%}
 <div class="row">
   <div class="col-md-3"><a href={{item['link']}}>{{item['title']}}</a></div>

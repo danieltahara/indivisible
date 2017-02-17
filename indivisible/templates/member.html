@@ -5,22 +5,26 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      <div class="row"><h2>{{member.get_name()}}</h2></div>
+      <div class="row"><h2>{{member.get_name()}} ({{member.get_party()}})</h2></div>
+      <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+          <li><a data-toggle="tab" href="#votes">Recent Votes</a></li>
+      </ul>
 
-      <div class="row member-profile">
-        <h3>Profile</h3>
-        {{macros.print_key_values(member.to_dict(), "col-md-2", "col-md-8")}}
-      </div>
+      <div class="tab-content">
+        <div class="member-profile tab-pane fade in active" id="profile">
+          {{macros.render_member(member)}}
+        </div>
 
-      <div class="row member-recent-votes">
-        <h3>Recent Votes</h3>
-        {% for vote in member.get_recent_votes(10) -%}
-        <div>{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
-        {%- endfor %}
+        <div class="member-recent-votes tab-pane fade" id="votes">
+          {% for vote in member.get_recent_votes(10) -%}
+          <div class="row">{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
+          {%- endfor %}
+        </div>
       </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 twitter-timeline-container">
       <a class="twitter-timeline" href="https://twitter.com/{{member.get_twitter_handle()}}">
         Twitter Feed
       </a>

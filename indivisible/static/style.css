@@ -1,4 +1,13 @@
-.member-profile .row, .member-recent-votes .row {
+.member-profile > .row, .member-recent-votes > .row {
   margin-bottom: 3px;
   border-bottom: 1px solid #BBB;
+}
+
+.tab-content {
+  margin-top: 10px;
+}
+
+.twitter-timeline-container {
+  height: 800px;
+  overflow-y: scroll;
 }

@@ -51,6 +51,10 @@ def get_votes(id):
     votes = cp.get_recent_votes(last_n)
     return render_template('json.html', data=votes)
 
+@app.route('/committees/<chamber>/<id>')
+def get_committee(chamber, id):
+    return "FOO"
+
 @app.context_processor
 def add_utilities():
     def json_pretty(arg):

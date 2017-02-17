@@ -22,8 +22,32 @@ class Congressperson(object):
     def get_name(self):
         return " ".join([self.get_first_name(), self.get_last_name()])
 
+    def get_party(self):
+        return self.member['current_party']
+
     def get_twitter_handle(self):
         return self.member['twitter_account']
+
+    def get_facebook_account(self):
+        return self.member['facebook_account']
+
+    def get_google_entity(self):
+        return self.member['google_entity_id']
+
+    def get_website(self):
+        return self.member['url']
+
+    def get_state(self):
+        return self.member['roles'][0]['state']
+
+    def get_chamber(self):
+        return self.member['roles'][0]['chamber']
+
+    def get_district(self):
+        return self.member['roles'][0]['district']
+
+    def get_committees(self):
+        return self.member['roles'][0]['committees']
 
     def get_recent_votes(self, last_n=0):
         """
@@ -42,4 +66,15 @@ class Congressperson(object):
         pass
 
     def to_dict(self):
-        return self.member
+        member = {
+            "name": self.get_name(),
+            "party": self.get_party(),
+            "website": self.member['url'],
+            "facebook": self.member['facebook_account'],
+            "twitter": self.get_twitter_handle(),
+            "google_entity_id": self.member['google_entity_id'],
+        }
+        member.update(self.member['roles'][0])
+        member['committees'] = [{'name': c['name'], 'code': c['code']} \
+                                for c in member['committees']]
+        return member

@@ -10,64 +10,47 @@
 {%- endmacro %}
 
 {% macro render_member(member) -%}
-<div class="row">
-  <div class="col-md-2">Name</div>
-  <div class="col-md-10">{{member.get_name()}}</div>
+{% if member.get_image_url() -%}
+<div class="col-md-4">
+    <img src={{member.get_image_url()}} alt={{member.get_name()}} style="width:200;height:300px">
 </div>
-<div class="row">
-  <div class="col-md-2">State</div>
-  <div class="col-md-10">{{member.get_state()}}</div>
-</div>
-<div class="row">
-  <div class="col-md-2">District</div>
-  <div class="col-md-10">{{member.get_district()}}</div>
-</div>
-<div class="row">
-  <div class="col-md-2">Chamber</div>
-  <div class="col-md-10">{{member.get_chamber()}}</div>
-</div>
-<div class="row">
-  <div class="col-md-2">Party</div>
-  <div class="col-md-10">{{member.get_party()}}</div>
-</div>
-<div class="row">
-  <div class="col-md-2">Website</div>
-  <div class="col-md-10"><a href={{member.get_website()}}>{{member.get_website()}}</a></div>
-</div>
-<div class="row">
-  <div class="col-md-2">Committees</div>
-  <div class="col-md-10">
-    {% for c in member.get_committees() -%}
-    <div class="row"><div class="col-md-12">
-        <a href={{url_for('get_committee', chamber=member.get_chamber(), code=c['code'])}}>{{c['name']}}</a>
-    </div></div>
-    {%- endfor %}
+<div class="col-md-8">
+{% else %}
+<div class="col-md-12">
+{% endif %}
+  <div class="row">
+    <div class="col-md-2">Name</div>
+    <div class="col-md-10">{{member.get_name()}}</div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-2">Offices</div>
-  <div class="col-md-10">
-    {% for o in member.get_offices() -%}
-    <div class="row">
-      <div class="row">
-        <div class="col-md-2">{{ o["City"] }}</div>
-        <div class="col-md-4">{{ o["Phone"] }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-2">Staff</div>
-        <div class="col-md-10">
-        {% if o["StaffList"] is iterable -%}
-        {% for s in o["StaffList"] -%}
-          <div class="row">
-            <div class="col-md-4">{{ s["FirstName"] }}, {{s["LastName"]}}</div>
-            <div class="col-md-6">{{ s["OfficeStaffTypeDescription"] }}</div>
-          </div>
-        {%- endfor %}
-        {%- endif %}
-        </div>
-      </div>
+  <div class="row">
+    <div class="col-md-2">State</div>
+    <div class="col-md-10">{{member.get_state()}}</div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">District</div>
+    <div class="col-md-10">{{member.get_district()}}</div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">Chamber</div>
+    <div class="col-md-10">{{member.get_chamber()}}</div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">Party</div>
+    <div class="col-md-10">{{member.get_party()}}</div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">Website</div>
+    <div class="col-md-10"><a href={{member.get_website()}}>{{member.get_website()}}</a></div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">Committees</div>
+    <div class="col-md-10">
+      {% for c in member.get_committees() -%}
+      <div class="row"><div class="col-md-12">
+          <a href={{url_for('get_committee', chamber=member.get_chamber(), code=c['code'])}}>{{c['name']}}</a>
+      </div></div>
+      {%- endfor %}
     </div>
-    {%- endfor %}
   </div>
 </div>
 {%- endmacro %}
@@ -100,8 +83,28 @@
 {%- endmacro %}
 
 {% macro render_rss(item) -%}
-<div class="row">
+<div class="row member-statements">
   <div class="col-md-3"><a href={{item['link']}}>{{item['title']}}</a></div>
   <div class="col-md-9">{{item['description']|safe}}</div>
 </div>
 {%- endmacro %}
+
+{% macro render_office_info(office) -%}
+<div class="row">
+  <div class="col-md-12">
+    <div class="row"><div class="col-md-12"><strong>{{office["City"]}}</strong></div></div>
+    <div class="row"><div class="col-md-12"><em>Phone</em>: {{ office["Phone"] }}</div></div>
+    <div class="row">
+      <div class="col-md-12">
+        {% if office["StaffList"] is iterable -%}
+        {% for s in office["StaffList"] -%}
+        <div class="row">
+          <div class="col-md-12"><em>{{ s["OfficeStaffTypeDescription"] }}</em>: {{ s["FirstName"] }} {{s["LastName"]}}</div>
+        </div>
+        {%- endfor %}
+        {%- endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

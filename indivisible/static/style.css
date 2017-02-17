@@ -1,6 +1,17 @@
-.member-profile > .row, .member-recent-votes > .row, .member-statements > .row, .member-recent-events > .row {
+.member-contact > .row, .member-recent-votes > .row, .member-recent-events > .row {
   margin-bottom: 3px;
   border-bottom: 1px solid #BBB;
+}
+
+.member-statements {
+  height: 200px;
+  overflow-y: hidden;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #BBB;
+}
+
+.member-profile {
+  margin-bottom: 10px;
 }
 
 .tab-content {
@@ -8,6 +19,6 @@
 }
 
 .twitter-timeline-container {
-  height: 800px;
+  height: 1500px;
   overflow-y: scroll;
 }

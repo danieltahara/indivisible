@@ -27,6 +27,10 @@ class Congressperson(object):
     def get_name(self):
         return " ".join([self.get_first_name(), self.get_last_name()])
 
+    def get_image_url(self):
+        member_info = self.gpo.get_member_info(self.get_last_name(), self.get_first_name())
+        return member_info.get("ImageUrl", None) if member_info else None
+
     def get_party(self):
         return self.member['current_party']
 

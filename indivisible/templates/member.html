@@ -5,17 +5,22 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      <div class="row"><h2>{{member.get_name()}} ({{member.get_party()}})</h2></div>
+      <div class="row"><h2>{{member.get_name()}}</h2></div>
+      <div class="member-profile row">
+        {{ macros.render_member(member) }}
+      </div>
       <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+          <li class="active"><a data-toggle="tab" href="#contact">Contact</a></li>
           <li><a data-toggle="tab" href="#votes">Votes</a></li>
           <li><a data-toggle="tab" href="#statements">Statements</a></li>
           <li><a data-toggle="tab" href="#events">News</a></li>
       </ul>
 
       <div class="tab-content">
-        <div class="member-profile tab-pane fade in active" id="profile">
-          {{macros.render_member(member)}}
+        <div class="member-contact tab-pane fade in active" id="contact">
+          {% for o in member.get_offices() -%}
+          {{macros.render_office_info(o)}}
+          {% endfor %}
         </div>
 
         <div class="member-recent-votes tab-pane fade" id="votes">
@@ -30,11 +35,7 @@
           {%- endfor %}
         </div>
 
-        <div class="member-statements tab-pane fade" id="statements">
-          <div class="row">
-            <div class="col-md-3"><em>Title</em></div>
-            <div class="col-md-9"><em>Description</em></div>
-          </div>
+        <div class="tab-pane fade" id="statements">
           {% for item in member.get_statements(10) -%}
           {{macros.render_rss(item)}}
           {%- endfor %}

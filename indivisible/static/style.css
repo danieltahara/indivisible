@@ -1,4 +1,4 @@
-.member-profile > .row, .member-recent-votes > .row {
+.member-profile > .row, .member-recent-votes > .row, .member-statements > .row, .member-recent-events > .row {
   margin-bottom: 3px;
   border-bottom: 1px solid #BBB;
 }

@@ -39,9 +39,27 @@
   <div class="col-md-8">
     {% for c in member.get_committees() -%}
     <div class="row"><div class="col-md-12">
-        <a href={{url_for('get_committee', chamber=member.get_chamber(), id=['code'])}}>{{c['name']}}</a>
+        <a href={{url_for('get_committee', chamber=member.get_chamber(), code=c['code'])}}>{{c['name']}}</a>
     </div></div>
     {%- endfor %}
   </div>
+</div>
+{%- endmacro %}
+
+{% macro render_vote(vote_json) -%}
+<div class="row">
+  <div class="col-md-2">{{vote_json['date']}}</div>
+  <div class="col-md-2">
+    <a href={{url_for('get_votes', congress=vote_json['congress'], chamber=vote_json['chamber'],
+      session=vote_json['session'], roll_call=vote_json['roll_call'])}}>{{vote_json['question']}}</a></div>
+  <div class="col-md-7">{{vote_json['description']}}</div>
+  <div class="col-md-1">{{vote_json['position']}}</div>
+</div>
+{%- endmacro %}
+
+{% macro render_rss(item) -%}
+<div class="row">
+  <div class="col-md-3"><a href={{item['link']}}>{{item['title']}}</a></div>
+  <div class="col-md-9">{{item['description']|safe}}</div>
 </div>
 {%- endmacro %}

@@ -8,8 +8,9 @@
       <div class="row"><h2>{{member.get_name()}} ({{member.get_party()}})</h2></div>
       <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
-          <li><a data-toggle="tab" href="#votes">Recent Votes</a></li>
-          <li><a data-toggle="tab" href="#events">Recent News</a></li>
+          <li><a data-toggle="tab" href="#votes">Votes</a></li>
+          <li><a data-toggle="tab" href="#statements">Statements</a></li>
+          <li><a data-toggle="tab" href="#events">News</a></li>
       </ul>
 
       <div class="tab-content">
@@ -18,8 +19,24 @@
         </div>
 
         <div class="member-recent-votes tab-pane fade" id="votes">
-          {% for vote in member.get_recent_votes(10) -%}
-          <div class="row">{{macros.print_key_values(vote, "col-md-2", "col-md-8")}}</div>
+          <div class="row">
+            <div class="col-md-2"><em>Date</em></div>
+            <div class="col-md-2"><em>Question</em></div>
+            <div class="col-md-7"><em>Description</em></div>
+            <div class="col-md-1"><em>Position</em></div>
+          </div>
+          {% for vote in member.get_votes(20) -%}
+          {{macros.render_vote(vote)}}
+          {%- endfor %}
+        </div>
+
+        <div class="member-statements tab-pane fade" id="statements">
+          <div class="row">
+            <div class="col-md-3"><em>Title</em></div>
+            <div class="col-md-9"><em>Description</em></div>
+          </div>
+          {% for item in member.get_statements(10) -%}
+          {{macros.render_rss(item)}}
           {%- endfor %}
         </div>
 

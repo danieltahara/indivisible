@@ -1,3 +1,5 @@
+import feedparser
+
 class Congressperson(object):
     @classmethod
     def from_id(cls, pp, er, id):
@@ -50,7 +52,7 @@ class Congressperson(object):
     def get_committees(self):
         return self.member['roles'][0]['committees']
 
-    def get_recent_votes(self, last_n=0):
+    def get_votes(self, last_n=0):
         """
         Get votes by congressperson.
 
@@ -69,6 +71,16 @@ class Congressperson(object):
         """
         events = self.er.get_events(self.get_name())
         return events[:last_n] if last_n > 0 else events
+
+    def get_statements(self, last_n=0):
+        """
+        Get public statements from Congressperson
+
+        @param last_n: if > 0, limit on number of votes to return. Else returns 100.
+        @return: rss statements by congressperson.
+        """
+        feed = feedparser.parse(self.member['rss_url'])
+        return feed['items'][:last_n] if feed['items'] and last_n > 0 else []
 
     def get_calendar(self):
         pass

@@ -1,11 +1,13 @@
 from flask import (
     Flask,
+    redirect,
     render_template,
     request,
     url_for,
 )
 from flask_bootstrap import Bootstrap
 import json
+from urlparse import urljoin
 import us
 
 from datasources.eventregistry import EventRegistry
@@ -46,19 +48,22 @@ def get_member(id):
     cp = Congressperson.from_id(pp, er, id)
     return render_template('member.html', member=cp)
 
-@app.route('/members/<id>/votes')
-def get_votes(id):
-    cp = Congressperson(pp, er, id)
-    last_n = int(request.args.get('last', 0))
-    votes = cp.get_recent_votes(last_n)
-    return render_template('json.html', data=votes)
+@app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
+def get_votes(congress, chamber, session, roll_call):
+    url = "https://projects.propublica.org/represent/votes/{congress}/{chamber}/{session}/{roll_call}".format(
+        congress=congress, chamber=chamber, session=session, roll_call=roll_call)
+    return redirect(url, 302)
 
-@app.route('/committees/<chamber>/<id>')
-def get_committee(chamber, id):
-    return "FOO"
+@app.route('/committees/<chamber>/<code>')
+def get_committee(chamber, code):
+    return redirect(
+        urljoin('https://www.govtrack.us/congress/committees/', code), 302)
 
 @app.context_processor
 def add_utilities():
     def json_pretty(arg):
         return json.dumps(arg, indent=4, separators=(',', ': '))
-    return dict(json_pretty=json_pretty, url_for=url_for)
+    return dict(
+        json_pretty=json_pretty,
+        url_for=url_for,
+    )

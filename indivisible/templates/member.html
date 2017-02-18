@@ -55,7 +55,7 @@
         <div class="tab-pane fade" id="statements">
           <table class="table table-striped">
             <tbody>
-              {% for item in member.get_statements(10) -%}
+              {% for item in member.get_statements(20) -%}
               {{macros.render_rss(item)}}
               {%- endfor %}
             </tbody>
@@ -65,7 +65,7 @@
         <div class="tab-pane fade" id="events">
           <table class="table table-striped">
             <tbody>
-              {% for event in member.get_events(10) -%}
+              {% for event in member.get_events(20) -%}
               {{macros.render_event(event)}}
               {%- endfor %}
             </tbody>

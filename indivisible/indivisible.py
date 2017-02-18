@@ -10,7 +10,7 @@ import json
 from urlparse import urljoin
 import us
 
-from datasources.eventregistry import EventRegistry
+from datasources.eventregistry2 import EventRegistry2
 from datasources.gpo import GPO
 from datasources.propublica import ProPublica
 from models.congress import Congress
@@ -21,7 +21,7 @@ app.config.from_envvar('CONFIG')
 Bootstrap(app)
 
 pp = ProPublica(app.config['PROPUBLICA_API_KEY'])
-er = EventRegistry(app.config['EVENT_REGISTRY_API_KEY'])
+er = EventRegistry2(app.config['EVENT_REGISTRY_API_KEY'])
 gpo = GPO(app.config['GPO_DATA_PATH'])
 cg = Congress(pp, er, gpo, 115)
 

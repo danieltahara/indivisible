@@ -1,7 +1,8 @@
 import feedparser
-import json
+
 
 class Congressperson(object):
+
     @classmethod
     def from_id(cls, pp, er, gpo, id):
         member = pp.get_member_by_id(id)
@@ -28,7 +29,8 @@ class Congressperson(object):
         return " ".join([self.get_first_name(), self.get_last_name()])
 
     def get_image_url(self):
-        member_info = self.gpo.get_member_info(self.get_last_name(), self.get_first_name())
+        member_info = self.gpo.get_member_info(self.get_last_name(),
+                                               self.get_first_name())
         return member_info.get("ImageUrl", None) if member_info else None
 
     def get_party(self):
@@ -59,33 +61,34 @@ class Congressperson(object):
         return self.member['roles'][0]['committees']
 
     def get_offices(self):
-        return self.gpo.get_offices(self.get_last_name(), self.get_first_name())
+        return self.gpo.get_offices(self.get_last_name(),
+                                    self.get_first_name())
 
     def get_votes(self, last_n=0):
         """
         Get votes by congressperson.
 
-        @param last_n: if > 0, limit on number of votes to return. Else returns 100.
+        @param last_n: if > 0, limit on number of votes to return.
         @return: Votes by congressperson.
         """
         votes = self.pp.get_member_votes(self.get_id())
         return votes[:last_n] if last_n > 0 else votes
 
-    def get_events(self, last_n=0):
+    def get_events(self, limit=0):
         """
         Get new events related to congressperson using EventRegistry API
 
-        @param last_n: if > 0, limit on number of votes to return. Else returns 100.
+        @param limit: if > 0, limit on number of votes to return.
         @return: Votes by congressperson.
         """
-        events = self.er.get_events(self.get_name())
-        return events[:last_n] if last_n > 0 else events
+        events = self.er.get_events(self.get_name(), limit=limit)
+        return events if events else []
 
     def get_statements(self, last_n=0):
         """
         Get public statements from Congressperson
 
-        @param last_n: if > 0, limit on number of votes to return. Else returns 100.
+        @param last_n: if > 0, limit on number of votes to return.
         @return: rss statements by congressperson.
         """
         feed = feedparser.parse(self.member['rss_url'])

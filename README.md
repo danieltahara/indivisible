@@ -7,8 +7,7 @@ https://www.indivisibleguide.com/). Data sources include:
 2. [Event Registry](https://www.eventregistry.org)
 3. [U.S. Government Publishing Office](http://memberguide.gpo.gov/)
 4. [GovTrack.us](https://www.govtrack.us/)
-
-Candidate focus inspired by [ProPublica Election Databot](https://www.propublica.org/article/election-databot-sources)
+5. [Politifact](http://www.politifact.com/)
 
 ## Setup:
 * You have python installed on your computer (comes by default), as well as the following libraries:

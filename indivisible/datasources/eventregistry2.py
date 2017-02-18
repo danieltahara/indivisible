@@ -32,5 +32,12 @@ class EventRegistry2(EventRegistry):
             print result['error']
             return []
         else:
-            # TODO: paging
-            return result['events']['results']
+            if concept_uri:
+                to_ret = []
+                for res in result['events']['results']:
+                    for c in res['concepts']:
+                        if c['uri'] == concept_uri and c['score'] >= 50:
+                            to_ret.append(res)
+                return to_ret
+            else:
+                return result['events']['results']

@@ -90,7 +90,7 @@
         <div class="tab-pane fade" id="events">
           <table class="table table-striped">
             <tbody>
-              {% for event in member.get_events(20) -%}
+              {% for event in member.get_events(100) -%}
               {{macros.render_event(event)}}
               {%- endfor %}
             </tbody>

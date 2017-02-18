@@ -114,3 +114,14 @@
   </td>
 </tr>
 {% endmacro %}
+
+{% macro render_statement(stmt) -%}
+<tr>
+  <td>{{stmt['statement_date']}}</td>
+  <td><a
+      href="http://www.politifact.com/{{stmt['statement_url']}}">{{stmt['ruling_headline']}}</a>{{stmt['statement']|safe}}</td>
+  <td>{{stmt['ruling_link_text']}}</td>
+  <td> <img class="img-responsive" src={{stmt['ruling']['canonical_ruling_graphic']}}
+    alt={{stmt['ruling_headline']}} style="max-height:75px;"/></td>
+</tr>
+{% endmacro %}

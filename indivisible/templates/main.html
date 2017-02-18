@@ -52,27 +52,30 @@
       </tbody>
     </table>
   <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script>
-    var options = { valueNames: ['name', 'state', 'district', 'chamber'], };
-    var memberList = new List('members', options);
+    $(document).ready(function(){
+      var options = { valueNames: ['name', 'state', 'district', 'chamber'], };
+      var memberList = new List('members', options);
 
-    var updateList = function(){
-      var chamber = $(".chamber_s").val()
-      var state = $(".state_s").val()
-      var district = $(".district_s").val()
+      var updateList = function(){
+        var chamber = $(".chamber_s").val()
+        var state = $(".state_s").val()
+        var district = $(".district_s").val()
 
-      memberList.filter(function(item) {
-        return (!state || item.values().state == state) &&
-          (!district || item.values().district == district) &&
-          (!chamber || item.values().chamber == chamber)
+        memberList.filter(function(item) {
+          return (!state || item.values().state == state) &&
+            (!district || item.values().district == district) &&
+            (!chamber || item.values().chamber == chamber)
+        });
+      }
+
+      $(function(){
+        updateList();
+        $(".chamber_s").change(updateList);
+        $(".state_s").change(updateList);
+        $(".district_s").change(updateList);
       });
-    }
-
-    $(function(){
-      updateList();
-      $(".chamber_s").change(updateList);
-      $(".state_s").change(updateList);
-      $(".district_s").change(updateList);
     });
   </script>
   </div>

@@ -12,6 +12,7 @@ import us
 
 from datasources.eventregistry2 import EventRegistry2
 from datasources.gpo import GPO
+from datasources.politifact import Politifact
 from datasources.propublica import ProPublica
 from models.congress import Congress
 from models.congressperson import Congressperson
@@ -23,7 +24,8 @@ Bootstrap(app)
 pp = ProPublica(app.config['PROPUBLICA_API_KEY'])
 er = EventRegistry2(app.config['EVENT_REGISTRY_API_KEY'])
 gpo = GPO(app.config['GPO_DATA_PATH'])
-cg = Congress(pp, er, gpo, 115)
+pf = Politifact()
+cg = Congress(pp, er, gpo, pf, 115)
 
 
 @app.route('/')
@@ -49,7 +51,7 @@ def search_members_by_location():
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.from_id(pp, er, gpo, id)
+    cp = Congressperson.from_id(pp, er, gpo, pf, id)
     return render_template('member.html', member=cp)
 
 
@@ -72,6 +74,14 @@ def get_committee(chamber, code):
 def get_event(uri):
     url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles" \
         .format(uri=uri)
+    return redirect(url, 302)
+
+
+@app.route('/politifact/<first_name>/<last_name>')
+def get_politifact(last_name, first_name):
+    url = "http://www.politifact.com/personalities/{first_name}-{last_name}/" \
+        "statements".format(last_name=last_name.lower(),
+                            first_name=first_name.lower())
     return redirect(url, 302)
 
 

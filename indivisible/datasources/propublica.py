@@ -1,8 +1,7 @@
-import httplib
-import json
 import requests
 from urlparse import urljoin
 import us
+
 
 class ProPublica(object):
     version = "v1"
@@ -74,7 +73,6 @@ class ProPublica(object):
         """
         results = self._get("members/{id}/votes.json".format(id=id))
         return results[0]['votes'] if results else []
-
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(self.version), path)

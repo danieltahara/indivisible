@@ -4,16 +4,17 @@ import feedparser
 class Congressperson(object):
 
     @classmethod
-    def from_id(cls, pp, er, gpo, id):
+    def from_id(cls, pp, er, gpo, pf, id):
         member = pp.get_member_by_id(id)
         if member is None:
             return None
-        return cls(pp, er, gpo, member)
+        return cls(pp, er, gpo, pf, member)
 
-    def __init__(self, pp, er, gpo, member):
+    def __init__(self, pp, er, gpo, pf, member):
         self.pp = pp
         self.er = er
         self.gpo = gpo
+        self.pf = pf
         self.member = member
 
     def get_id(self):
@@ -93,6 +94,16 @@ class Congressperson(object):
         """
         feed = feedparser.parse(self.member['rss_url'])
         return feed['items'][:last_n] if feed['items'] and last_n > 0 else []
+
+    def get_politifacts(self, limit=0):
+        """
+        Get politifact ratings for statements by cp
+
+        @param limit: if > 0, limit on number of statements to return.
+        @return: politifacts ratings
+        """
+        return self.pf.get_statements_by_person(
+            self.get_first_name(), self.get_last_name(), limit=limit)
 
     def get_calendar(self):
         pass

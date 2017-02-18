@@ -15,6 +15,7 @@
           <li><a data-toggle="tab" href="#votes">Votes</a></li>
           <li><a data-toggle="tab" href="#statements">Statements</a></li>
           <li><a data-toggle="tab" href="#events">News</a></li>
+          <li><a data-toggle="tab" href="#report-card">Politifact</a></li>
       </ul>
 
       <div class="tab-content">
@@ -35,6 +36,29 @@
           </table>
         </div>
 
+        <div class="member-report-card tab-pane fade" id="report-card">
+          <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+          <table class="table table-striped">
+            <thead>
+              <th>Date</th>
+              <th>Statement</th>
+              <th>Politifact</th>
+              <th>Rating</th>
+            </thead>
+            <tbody>
+              {% for stmt in member.get_politifacts(10) -%}
+              {{macros.render_statement(stmt)}}
+              {%- endfor %}
+            </tbody>
+          </table>
+          <div class="row"><div class="col-md-12">
+              <a class="btn btn-primary pull-right" role="button" style="color: gold;"
+                href={{url_for('get_politifact', last_name=member.get_last_name(),
+                first_name=member.get_first_name())}}>
+                More at Politifact</a>
+            </div></div>
+        </div>
+
         <div class="member-recent-votes tab-pane fade" id="votes">
           <table class="table table-striped">
             <thead>
@@ -49,7 +73,7 @@
               {% for vote in member.get_votes(20) -%}
               {{macros.render_vote(vote)}}
               {%- endfor %}
-          </tbodY>
+          </tbody>
           </table>
         </div>
 

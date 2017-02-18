@@ -12,7 +12,7 @@
 {% macro render_member(member) -%}
 {% if member.get_image_url() -%}
 <div class="col-md-4">
-  <img class="img-responsive" src={{member.get_image_url()}} alt={{member.get_name()}}>
+  <img class="img-responsive" src={{member.get_image_url()}} alt={{member.get_name()|safe}}>
 </div>
 <div class="col-md-8">
 {% else %}

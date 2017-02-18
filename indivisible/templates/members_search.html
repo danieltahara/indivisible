@@ -6,7 +6,10 @@
   <h3>Search Results:</h3>
   <table class="table table-striped">
     <thead>
-      <tr><td>Name (last, first)</td></tr>
+      <th>Name</th>
+      <th>Chamber</th>
+      <th>State</th>
+      <th>District</th>
     </thead>
     <tbody>
       {% for member in members %}
@@ -14,6 +17,9 @@
         <td><a href="{{url_for('get_member', id=member.get_id())}}">
           {{member.get_last_name()}}, {{member.get_first_name()}}
         </a></td>
+        <td>{{member.get_chamber()}}</td>
+        <td>{{member.get_state()}}</td>
+        <td>{{member.get_district()}}</td>
       </tr>
       {% endfor %}
     </tbody>

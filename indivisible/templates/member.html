@@ -2,10 +2,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+{{ super() }}
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      <div class="row"><h2>{{member.get_name()}}</h2></div>
+      <div class="row"><h2>{{member.get_name()|safe}}</h2></div>
       <div class="member-profile row">
         {{ macros.render_member(member) }}
       </div>

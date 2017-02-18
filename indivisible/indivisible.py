@@ -25,16 +25,18 @@ er = EventRegistry2(app.config['EVENT_REGISTRY_API_KEY'])
 gpo = GPO(app.config['GPO_DATA_PATH'])
 cg = Congress(pp, er, gpo, 115)
 
+
 @app.route('/')
 def main():
-    all_states = us.states.STATES
-    return render_template("main.html", all_states=us.states.STATES)
+    return render_template("main.html", cg=cg, all_states=us.states.STATES)
+
 
 @app.route('/members/search')
 def search_members():
     name = request.args.get('q')
     members = cg.search_members(name)
     return render_template('members_search.html', members=members)
+
 
 @app.route('/members/location_search')
 def search_members_by_location():
@@ -44,26 +46,34 @@ def search_members_by_location():
     members.extend(cg.get_representative(state, district))
     return render_template('members_search.html', members=members)
 
+
 @app.route('/members/<id>')
 def get_member(id):
     cp = Congressperson.from_id(pp, er, gpo, id)
     return render_template('member.html', member=cp)
 
+
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
 def get_votes(congress, chamber, session, roll_call):
-    url = "https://projects.propublica.org/represent/votes/{congress}/{chamber}/{session}/{roll_call}".format(
-        congress=congress, chamber=chamber, session=session, roll_call=roll_call)
+    url = "https://projects.propublica.org/represent/votes/{congress}/" \
+        "{chamber}/{session}/{roll_call}".format(
+            congress=congress, chamber=chamber, session=session,
+            roll_call=roll_call)
     return redirect(url, 302)
+
 
 @app.route('/committees/<chamber>/<code>')
 def get_committee(chamber, code):
     return redirect(
         urljoin('https://www.govtrack.us/congress/committees/', code), 302)
 
+
 @app.route('/events/<uri>')
 def get_event(uri):
-    url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles".format(uri=uri)
+    url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles" \
+        .format(uri=uri)
     return redirect(url, 302)
+
 
 @app.context_processor
 def add_utilities():

@@ -1,5 +1,3 @@
-import requests
-from urlparse import urljoin
 from eventregistry import (
     EventRegistry,
     QueryEvents,
@@ -20,10 +18,9 @@ class EventRegistry2(EventRegistry):
     def get_events(self, thing, limit=0):
         query = QueryEvents(lang='eng')
         concept_uri = self.getConceptUri(thing)
+        query.addKeyword(thing)
         if concept_uri:
             query.addConcept(concept_uri)
-        else:
-            query.addKeyword(thing)
 
         count = limit if limit > 0 else 30
         requested_result = RequestEventsInfo(

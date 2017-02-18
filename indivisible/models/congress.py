@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from congressperson import Congressperson
 
+
 class Congress(object):
     SENATE = 'senate'
     HOUSE = 'house'
@@ -11,6 +12,15 @@ class Congress(object):
         self.er = er
         self.gpo = gpo
         self.congress = congress
+
+    def get_all_members(self):
+        senators = self.pp.get_members(self.congress, self.SENATE)
+        for s in senators:
+            s['chamber'] = self.SENATE.capitalize()
+        reps = self.pp.get_members(self.congress, self.HOUSE)
+        for r in reps:
+            r['chamber'] = self.HOUSE.capitalize()
+        return senators + reps
 
     def get_members(self, chamber):
         return self.pp.get_members(self.congress, chamber)

@@ -4,8 +4,6 @@
 }
 
 .member-statements {
-  height: 200px;
-  overflow-y: hidden;
   margin-bottom: 5px;
   border-bottom: 1px solid #BBB;
 }

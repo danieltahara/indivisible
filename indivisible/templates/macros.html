@@ -91,7 +91,7 @@
 {% macro render_rss(item) -%}
 <tr class="member-statements">
   <td class="col-md-3"><a href={{item['link']}}>{{item['title']}}</a></td>
-  <td><div style="height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
+  <td><div style="max-height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
 </tr>
 {%- endmacro %}
 

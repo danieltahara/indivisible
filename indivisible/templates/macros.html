@@ -74,24 +74,19 @@
 
 {% macro render_event(event) -%}
 <tr>
-  <td class="col-md-2">{{event['eventDate']}}</td>
+  <td>{{event['eventDate']}}</td>
   <td>
     <div class="row"><div class="col-md-12">
       <a href={{url_for('get_event', uri=event['uri'])}}>{{event['title']['eng']}}</a>
-    </div></div>
-    <div class="row"><div class="col-md-12">
-      {% for c in event['categories'] -%}
-      <span class="tag">{{c['label'][5:]}}</span>
-      {%- endfor %}
-    </div></div>
+  </div></div>
   </td>
 </tr>
 {%- endmacro %}
 
 {% macro render_rss(item) -%}
-<tr class="member-statements">
-  <td class="col-md-3"><a href={{item['link']}}>{{item['title']}}</a></td>
-  <td><div style="max-height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
+<tr>
+  <td><a href={{item['link']}}>{{item['title']|safe}}</a></td>
+  <td><div class="row" style="max-height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
 </tr>
 {%- endmacro %}
 
@@ -121,7 +116,7 @@
   <td><a
       href="http://www.politifact.com/{{stmt['statement_url']}}">{{stmt['ruling_headline']}}</a>{{stmt['statement']|safe}}</td>
   <td>{{stmt['ruling_link_text']}}</td>
-  <td> <img class="img-responsive" src={{stmt['ruling']['canonical_ruling_graphic']}}
+  <td><img class="img-responsive" src={{stmt['ruling']['canonical_ruling_graphic']}}
     alt={{stmt['ruling_headline']}} style="max-height:75px;"/></td>
 </tr>
 {% endmacro %}

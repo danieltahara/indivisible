@@ -7,6 +7,7 @@ from flask import (
 )
 from flask_bootstrap import Bootstrap
 import json
+import os
 from urlparse import urljoin
 import us
 
@@ -18,12 +19,11 @@ from models.congress import Congress
 from models.congressperson import Congressperson
 
 app = Flask(__name__)
-app.config.from_envvar('CONFIG')
 Bootstrap(app)
 
-pp = ProPublica(app.config['PROPUBLICA_API_KEY'])
-er = EventRegistry2(app.config['EVENT_REGISTRY_API_KEY'])
-gpo = GPO(app.config['GPO_DATA_PATH'])
+pp = ProPublica(os.environ['PROPUBLICA_API_KEY'])
+er = EventRegistry2(os.environ['EVENT_REGISTRY_API_KEY'])
+gpo = GPO(os.environ['GPO_DATA_PATH'])
 pf = Politifact()
 cg = Congress(pp, er, gpo, pf, 115)
 
@@ -93,3 +93,9 @@ def add_utilities():
         json_pretty=json_pretty,
         url_for=url_for,
     )
+
+if __name__ == "__main__":
+    host = '0.0.0.0'
+    if os.environ.get('FLASK_DEBUG', '0') == '1':
+        host = '127.0.0.1'
+    app.run(host=host, port=os.environ.get('PORT', 5000))

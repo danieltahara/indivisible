@@ -44,7 +44,6 @@ GPO_DATA_PATH="/path/to/data/assets/gpo-114.json"
 
 ## How to run:
 ~~~
-pushd indivisible
-env PYTHONPATH=. CONFIG=/path/to/config FLASK_DEBUG=1 FLASK_APP=indivisible.py flask run
-popd
+export FLASK_DEBUG=1
+env $(cat indivisible.cfg | xargs) python indivisible/indivisible.py
 ~~~

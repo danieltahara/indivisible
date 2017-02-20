@@ -121,10 +121,9 @@ class Congressperson(object):
             self.get_first_name(), self.get_last_name(), limit=limit)
 
     def get_events(self):
-        events_by_date = defaultdict(list)
+        result = []
         for c in self.get_committees():
             events = self.cg.get_events_for_committee(c['code'])
             for event in events:
-                events_by_date[event['date']].append(event)
-        # TODO: flatten, sort by date
-        return events_by_date
+                result.append((event['date'], event))
+        return sorted(result, key=lambda ev: ev[0])

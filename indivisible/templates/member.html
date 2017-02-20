@@ -102,15 +102,12 @@
           <table class="table table-striped">
             <thead>
               <th>Date</th>
-              <th>Time</th>
               <th>Committee</th>
               <th>Event</th>
             </thead>
             <tbody>
-              {% for d, events in member.get_events().iteritems() -%}
-                {% for event in events -%}
-                  {{macros.render_event(event)}}
-                {%- endfor %}
+              {% for d, event in member.get_events() -%}
+                {{macros.render_event(event)}}
               {%- endfor %}
             </tbody>
           </table>

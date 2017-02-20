@@ -9,14 +9,15 @@ class Congress(object):
     SENATE = 'senate'
     HOUSE = 'house'
 
-    def __init__(self, pp, er, gpo, pf, dhg, congress):
+    def __init__(self, pp, er, gpo, pf, dhg, sg, congress):
         self.pp = pp
         self.er = er
         self.gpo = gpo
         self.pf = pf
         self.dhg = dhg
+        self.sg = sg
         self.congress = congress
-        self.events = None
+        self.events = {}
 
     def get_all_members(self):
         senators = self.get_members(self.SENATE)
@@ -107,45 +108,44 @@ class Congress(object):
             'subcommittee': (optional) subcommittee,
             'subcommittee_code': (optional) subcommittee code,
         }
-
         """
-        committees = self.get_all_committees_by_name()
-        events_by_commmittee_id = defaultdict(list)
-        today = datetime.date.today()
-        for i in range(days):
-            date = today + datetime.timedelta(days=i)
+        committees = self.get_committees_by_name(chamber)
+        all_events = []
+        if chamber == self.HOUSE:
+            today = datetime.date.today()
+            for i in range(days):
+                date = today + datetime.timedelta(days=i)
+                all_events.extend(self.dhg.get_events(date))
+        else:
+            all_events.extend(self.sg.get_events(None))
 
-            if chamber == self.HOUSE:
-                for e in self.dhg.get_events(date):
-                    committee = committees.get(e['committee'].upper(), None)
-                    if committee:
-                        e['committee_code'] = committee['id']
-                        e['chamber'] = chamber
-                        events_by_commmittee_id[committee['id']].append(e)
-                    else:
-                        events_by_commmittee_id['UNKNOWN'].append(e)
+        events_by_commmittee_id = defaultdict(list)
+        for e in all_events:
+            committee = committees.get(e['committee'].upper(), None)
+            if committee:
+                e['committee_code'] = committee['id']
+                e['chamber'] = chamber
+                events_by_commmittee_id[committee['id']].append(e)
             else:
-                pass
+                events_by_commmittee_id['UNKNOWN'].append(e)
         return dict(events_by_commmittee_id)
 
     def get_committees(self, chamber):
         return self.pp.get_committees(self.congress, chamber)
 
-    def get_events(self):
+    def get_events(self, chamber):
         # TODO: periodic refresh
-        if not self.events:
-            self.events = self.get_events_by_committee(self.HOUSE, 15)
-        return self.events
+        if not self.events.get(chamber, None):
+            self.events[chamber] = self.get_events_by_committee(chamber, 15)
+        return self.events[chamber]
 
-    def get_events_for_committee(self, code):
-        events = self.get_events()
+    def get_events_for_committee(self, chamber, code):
+        events = self.get_events(chamber)
         return events.get(code.upper(), [])
 
-    def get_all_committees_by_name(self):
+    def get_committees_by_name(self, chamber):
         committees = {}
-        for c in self.get_committees(self.HOUSE):
-            committees[c['name'].upper()] = c
-        for c in self.get_committees(self.SENATE):
+        for c in self.get_committees(chamber):
             committees[c['name'].upper()] = c
         return committees
 

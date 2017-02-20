@@ -80,7 +80,7 @@ class ProPublica(object):
         Get committees for given congress and chamber
         """
         results = self._get("{congress}/{chamber}/committees.json".format(
-            congress=congress, chamber=chamber))
+            congress=congress, chamber=chamber.lower()))
         ret = results[0]['committees'] if results else []
 
         h = HTMLParser()

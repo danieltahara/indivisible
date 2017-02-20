@@ -123,7 +123,7 @@ class Congressperson(object):
     def get_events(self):
         result = []
         for c in self.get_committees():
-            events = self.cg.get_events_for_committee(c['code'])
+            events = self.cg.get_events_for_committee(self.get_chamber(), c['code'])
             for event in events:
                 result.append((event['date'], event))
         return sorted(result, key=lambda ev: ev[0])

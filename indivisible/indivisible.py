@@ -15,6 +15,7 @@ from datasources.eventregistry2 import EventRegistry2
 from datasources.gpo import GPO
 from datasources.politifact import Politifact
 from datasources.propublica import ProPublica
+from datasources.docshousegov import DocsHouseGov
 from models.congress import Congress
 from models.congressperson import Congressperson
 
@@ -24,8 +25,9 @@ Bootstrap(app)
 pp = ProPublica(os.environ['PROPUBLICA_API_KEY'])
 er = EventRegistry2(os.environ['EVENT_REGISTRY_API_KEY'])
 gpo = GPO(os.environ['GPO_DATA_PATH'])
+dhg = DocsHouseGov()
 pf = Politifact()
-cg = Congress(pp, er, gpo, pf, 115)
+cg = Congress(pp, er, gpo, pf, dhg, 115)
 
 
 @app.route('/')
@@ -51,7 +53,7 @@ def search_members_by_location():
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.from_id(pp, er, gpo, pf, id)
+    cp = Congressperson.from_id(pp, er, gpo, pf, cg, id)
     return render_template('member.html', member=cp)
 
 
@@ -70,8 +72,8 @@ def get_committee(chamber, code):
         urljoin('https://www.govtrack.us/congress/committees/', code), 302)
 
 
-@app.route('/events/<uri>')
-def get_event(uri):
+@app.route('/news/<uri>')
+def get_news(uri):
     url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles" \
         .format(uri=uri)
     return redirect(url, 302)

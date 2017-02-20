@@ -1,20 +1,31 @@
+from collections import defaultdict
+import datetime
 import feedparser
 
 
 class Congressperson(object):
 
     @classmethod
-    def from_id(cls, pp, er, gpo, pf, id):
+    def from_id(cls, pp, er, gpo, pf, cg, id):
+        """
+        Create a Congressperson from the following datasources:
+            * ProPublica
+            * EventRegistry
+            * GPO
+            * Politifact
+        as well as a Congress and ID
+        """
         member = pp.get_member_by_id(id)
         if member is None:
             return None
-        return cls(pp, er, gpo, pf, member)
+        return cls(pp, er, gpo, pf, cg, member)
 
-    def __init__(self, pp, er, gpo, pf, member):
+    def __init__(self, pp, er, gpo, pf, cg, member):
         self.pp = pp
         self.er = er
         self.gpo = gpo
         self.pf = pf
+        self.cg = cg
         self.member = member
 
     def get_id(self):
@@ -75,7 +86,7 @@ class Congressperson(object):
         votes = self.pp.get_member_votes(self.get_id())
         return votes[:last_n] if last_n > 0 else votes
 
-    def get_events(self, limit=0):
+    def get_news(self, limit=0):
         """
         Get new events related to congressperson using EventRegistry API
 
@@ -93,7 +104,11 @@ class Congressperson(object):
         @return: rss statements by congressperson.
         """
         feed = feedparser.parse(self.member['rss_url'])
-        return feed['items'][:last_n] if feed['items'] and last_n > 0 else []
+        ret = feed['items'][:last_n] if feed['items'] and last_n > 0 else []
+        for r in ret:
+            r['date'] = datetime.datetime(*r['published_parsed'][:6]).strftime(
+                '%m-%d-%Y')
+        return ret
 
     def get_politifacts(self, limit=0):
         """
@@ -105,19 +120,11 @@ class Congressperson(object):
         return self.pf.get_statements_by_person(
             self.get_first_name(), self.get_last_name(), limit=limit)
 
-    def get_calendar(self):
-        pass
-
-    def to_dict(self):
-        member = {
-            "name": self.get_name(),
-            "party": self.get_party(),
-            "website": self.member['url'],
-            "facebook": self.member['facebook_account'],
-            "twitter": self.get_twitter_handle(),
-            "google_entity_id": self.member['google_entity_id'],
-        }
-        member.update(self.member['roles'][0])
-        member['committees'] = [{'name': c['name'], 'code': c['code']} \
-                                for c in member['committees']]
-        return member
+    def get_events(self):
+        events_by_date = defaultdict(list)
+        for c in self.get_committees():
+            events = self.cg.get_events_for_committee(c['code'])
+            for event in events:
+                events_by_date[event['date']].append(event)
+        # TODO: flatten, sort by date
+        return events_by_date

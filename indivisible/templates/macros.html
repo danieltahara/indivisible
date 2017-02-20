@@ -47,7 +47,8 @@
     <div class="col-md-9">
       {% for c in member.get_committees() -%}
       <div class="row"><div class="col-md-12">
-          <a href={{url_for('get_committee', chamber=member.get_chamber(), code=c['code'])}}>{{c['name']}}</a>
+          <a href={{url_for('get_committee', chamber=member.get_chamber(),
+            code=c['code'])}}>{{c['name']|safe}}</a>
       </div></div>
       {%- endfor %}
     </div>
@@ -72,12 +73,12 @@
 </tr>
 {%- endmacro %}
 
-{% macro render_event(event) -%}
+{% macro render_news(news) -%}
 <tr>
-  <td>{{event['eventDate']}}</td>
+  <td>{{news['eventDate']}}</td>
   <td>
     <div class="row"><div class="col-md-12">
-      <a href={{url_for('get_event', uri=event['uri'])}}>{{event['title']['eng']}}</a>
+      <a href={{url_for('get_news', uri=news['uri'])}}>{{news['title']['eng']}}</a>
   </div></div>
   </td>
 </tr>
@@ -85,6 +86,7 @@
 
 {% macro render_rss(item) -%}
 <tr>
+  <td>{{item['date']}}</td>
   <td><a href={{item['link']}}>{{item['title']|safe}}</a></td>
   <td><div class="row" style="max-height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
 </tr>
@@ -120,3 +122,14 @@
     alt={{stmt['ruling_headline']}} style="max-height:75px;"/></td>
 </tr>
 {% endmacro %}
+
+{% macro render_event(event) -%}
+<tr>
+  <td>{{event['date']}}</td>
+  <td>{{event['time']}}</td>
+  <td><a href={{url_for('get_committee', chamber=event['chamber'],
+      code=event['committee_code'])}}>{{event['committee']}}</a></td>
+  <td><a href={{event['url']}}>{{event['name']}}</a></td>
+</tr>
+{%- endmacro %}
+

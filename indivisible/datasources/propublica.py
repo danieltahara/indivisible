@@ -1,3 +1,4 @@
+from six.moves.html_parser import HTMLParser
 import requests
 from urlparse import urljoin
 import us
@@ -73,6 +74,19 @@ class ProPublica(object):
         """
         results = self._get("members/{id}/votes.json".format(id=id))
         return results[0]['votes'] if results else []
+
+    def get_committees(self, congress, chamber):
+        """
+        Get committees for given congress and chamber
+        """
+        results = self._get("{congress}/{chamber}/committees.json".format(
+            congress=congress, chamber=chamber))
+        ret = results[0]['committees'] if results else []
+
+        h = HTMLParser()
+        for c in ret:
+            c['name'] = h.unescape(c['name'])
+        return ret
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(self.version), path)

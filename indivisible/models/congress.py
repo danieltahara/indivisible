@@ -1,4 +1,6 @@
 from collections import defaultdict
+import datetime
+import json
 
 from congressperson import Congressperson
 
@@ -7,18 +9,20 @@ class Congress(object):
     SENATE = 'senate'
     HOUSE = 'house'
 
-    def __init__(self, pp, er, gpo, pf, congress):
+    def __init__(self, pp, er, gpo, pf, dhg, congress):
         self.pp = pp
         self.er = er
         self.gpo = gpo
         self.pf = pf
+        self.dhg = dhg
         self.congress = congress
+        self.events = None
 
     def get_all_members(self):
-        senators = self.pp.get_members(self.congress, self.SENATE)
+        senators = self.get_members(self.SENATE)
         for s in senators:
             s['chamber'] = self.SENATE.capitalize()
-        reps = self.pp.get_members(self.congress, self.HOUSE)
+        reps = self.get_members(self.HOUSE)
         for r in reps:
             r['chamber'] = self.HOUSE.capitalize()
         return senators + reps
@@ -26,6 +30,7 @@ class Congress(object):
     def get_members(self, chamber):
         return self.pp.get_members(self.congress, chamber)
 
+    # TODO: do this by default...
     def get_members_by_name(self, chamber):
         """
         Get members of Congress.
@@ -87,5 +92,67 @@ class Congress(object):
 
         return [self._make_cp_from_self(member['id']) for member in members]
 
+    def get_events_by_committee(self, chamber, days):
+        """
+        Get events for the next days.
+
+        @param days: number of days
+        @return: map of committee id (e.g. HSHA) to list of events with form: {
+            'name': name of event,
+            'url': event url,
+            'date': date event occurs,
+            'time': time event will occur,
+            'committee': commitee name,
+            'committee_codee': commitee code,
+            'subcommittee': (optional) subcommittee,
+            'subcommittee_code': (optional) subcommittee code,
+        }
+
+        """
+        committees = self.get_all_committees_by_name()
+        events_by_commmittee_id = defaultdict(list)
+        today = datetime.date.today()
+        for i in range(days):
+            date = today + datetime.timedelta(days=i)
+
+            if chamber == self.HOUSE:
+                for e in self.dhg.get_events(date):
+                    committee = committees.get(e['committee'].upper(), None)
+                    if committee:
+                        e['committee_code'] = committee['id']
+                        e['chamber'] = chamber
+                        events_by_commmittee_id[committee['id']].append(e)
+                    else:
+                        events_by_commmittee_id['UNKNOWN'].append(e)
+            else:
+                pass
+        return dict(events_by_commmittee_id)
+
+    def get_committees(self, chamber):
+        return self.pp.get_committees(self.congress, chamber)
+
+    def get_events(self):
+        # TODO: periodic refresh
+        if not self.events:
+            self.events = self.get_events_by_committee(self.HOUSE, 15)
+        return self.events
+
+    def get_events_for_committee(self, code):
+        events = self.get_events()
+        return events.get(code.upper(), [])
+
+    def get_all_committees_by_name(self):
+        committees = {}
+        for c in self.get_committees(self.HOUSE):
+            committees[c['name'].upper()] = c
+        for c in self.get_committees(self.SENATE):
+            committees[c['name'].upper()] = c
+        return committees
+
     def _make_cp_from_self(self, id):
-        return Congressperson.from_id(self.pp, self.er, self.gpo, self.pf, id)
+        return Congressperson.from_id(self.pp, self.er, self.gpo, self.pf,
+                                      self, id)
+
+
+def json_pretty(j):
+    print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))

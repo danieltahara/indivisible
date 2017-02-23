@@ -3,9 +3,27 @@
 
 {% block content %}
 {{ super() }}
-  <script src="//code.jquery.com/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
   <script src="{{ url_for('static', filename='js/browser-calls.js') }}"></script>
+
+  <div class="container">
+<div class="col-md-4 col-md-push-8">
+<div class="panel panel-primary client-controls">
+<div class="panel-heading"> <h3 class="panel-title">Make a call</h3> </div>
+<div class="panel-body"> <p><strong>Status</strong></p> <div
+class="well well-sm" id="call-status"> Connecting to Twilio...  </div>
+
+<button class="btn btn-lg btn-danger hangup-button" disabled onclick="hangUp()">Hang up</button>
+</div>
+</div>
+</div>
+    <div class="col-md-8">
+    <button onclick="callCongressperson('+16463976379')" type="button" class="btn btn-primary btn-lg call-congressperson-button">
+    <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+      FOO BAR BAZ
+    </button>
+    </div>
 {% endblock %}

@@ -24,7 +24,7 @@ class SenateGov(object):
 
         """
         baseTree = self._get(self.get_base_url())
-        if not baseTree:
+        if baseTree is None:
             return []
         trees = baseTree.findall("meeting")
         events = []

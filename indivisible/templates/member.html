@@ -3,6 +3,10 @@
 
 {% block content %}
 {{ super() }}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script src="{{ url_for('static', filename='js/browser-calls.js') }}"></script>
+
 <div class="container">
   <div class="row">
     <div class="col-md-8">
@@ -35,10 +39,22 @@
               {% endfor %}
             </tbody>
           </table>
-        </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="panel panel-primary client-controls">
+                <div class="panel-heading"> <h3 class="panel-title">Make a call</h3></div>
+                <div class="panel-body">
+                  <p><strong>Status</strong></p>
+                  <div class="well well-sm" id="call-status"> Connecting to Twilio...  </div>
+                </div>
+                <button class="btn btn-lg btn-danger hangup-button" disabled onclick="hangUp()">Hang up</button>
+              </div>
+            </div>
+          </div>
+
 
         <div class="member-report-card tab-pane fade" id="report-card">
-          <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
           <table class="table table-striped">
             <thead>
               <th>Date</th>

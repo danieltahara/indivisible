@@ -73,10 +73,8 @@ def get_member(id):
 
 @app.route('/members/token', methods=['GET'])
 def get_token():
-    # Generate the capability token
-
     token = capability.generate()
-
+    page = request.args.get('forPage')
     return jsonify({'token': token})
 
 
@@ -90,6 +88,7 @@ def call():
         dial.number('+16463976379')
 
     return str(response)
+
 
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
 def get_votes(congress, chamber, session, roll_call):
@@ -120,6 +119,9 @@ def get_politifact(last_name, first_name):
                             first_name=first_name.lower())
     return redirect(url, 302)
 
+@app.route('/test')
+def get_test():
+    return render_template('test_call.html')
 
 @app.context_processor
 def add_utilities():

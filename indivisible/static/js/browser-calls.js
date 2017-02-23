@@ -30,6 +30,7 @@ Twilio.Device.connect(function (connection) {
     // Enable the hang up button and disable the call buttons
     $(".hangup-button").prop("disabled", false);
     $(".call-congressperson-button").prop("disabled", true);
+    $(".congress-dialer").prop("hidden", false);
 
     updateCallStatus("In call with " + connection.message.phoneNumber);
 });
@@ -39,6 +40,7 @@ Twilio.Device.disconnect(function(connection) {
     // Disable the hangup button and enable the call buttons
     $(".hangup-button").prop("disabled", true);
     $(".call-congressperson-button").prop("disabled", false);
+    $(".congress-dialer").prop("hidden", true);
 
     updateCallStatus("Ready");
 });

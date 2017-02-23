@@ -36,6 +36,7 @@ cg = Congress(pp, er, gpo, pf, dhg, sg, 115)
 
 # Create a TwilioCapability object with our Twilio API credentials
 capability = None
+twilio_phone_number =os.environ.get('TWILIO_PHONE_NUMBER', None)
 if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
     # Allow our users to make outgoing calls with Twilio Client
     account_sid = os.environ['TWILIO_ACCOUNT_SID']
@@ -73,9 +74,14 @@ def get_member(id):
 
 @app.route('/members/token', methods=['GET'])
 def get_token():
-    token = capability.generate()
-    page = request.args.get('forPage')
-    return jsonify({'token': token})
+    if capability is not None:
+        token = capability.generate()
+        page = request.args.get('forPage')
+        return jsonify({'token': token})
+    else:
+        response = jsonify({"error": "Missing capability"})
+        response.status_code = 500
+        return response
 
 
 @app.route('/members/call', methods=['POST'])
@@ -83,9 +89,33 @@ def call():
     """Returns TwiML instructions to Twilio's POST requests"""
     response = twiml.Response()
 
-    TWILIO_PHONE_NUMBER="+19149158087"
-    with response.dial(callerId=TWILIO_PHONE_NUMBER) as dial:
-        dial.number('+16463976379')
+    with response.dial(callerId=twilio_phone_number) as dial:
+        dial.number("+16463976379")
+
+    return response
+
+
+@app.route('/members/call_new', methods=['POST'])
+def call_new():
+    """Returns TwiML instructions to Twilio's POST requests"""
+    response = twiml.Response()
+
+    with response.dial(callerId=twilio_phone_number) as dial:
+        member_id = request.form.get('member_id', None)
+        if not member_id:
+            response = jsonify({"error": "Missing member id"})
+            response.status_code = 500
+            return response
+
+        cp = Congressperson.from_id(pp, er, gpo, pf, cg, member_id)
+
+        office_id = request.form.get('office_id', 0)
+        offices = cp.get_offices()
+        if office_id >= len(offices) or office_id < 0:
+            office_id = 0
+        phone = offices[office_id]['Phone']
+
+        dial.number(phone)
 
     return str(response)
 
@@ -119,9 +149,6 @@ def get_politifact(last_name, first_name):
                             first_name=first_name.lower())
     return redirect(url, 302)
 
-@app.route('/test')
-def get_test():
-    return render_template('test_call.html')
 
 @app.context_processor
 def add_utilities():

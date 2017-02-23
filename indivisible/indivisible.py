@@ -1,5 +1,6 @@
 from flask import (
     Flask,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -8,6 +9,8 @@ from flask import (
 from flask_bootstrap import Bootstrap
 import json
 import os
+from twilio.util import TwilioCapability
+from twilio import twiml
 from urlparse import urljoin
 import us
 
@@ -30,6 +33,15 @@ dhg = DocsHouseGov()
 sg = SenateGov()
 pf = Politifact()
 cg = Congress(pp, er, gpo, pf, dhg, sg, 115)
+
+# Create a TwilioCapability object with our Twilio API credentials
+capability = None
+if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
+    # Allow our users to make outgoing calls with Twilio Client
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    capability = TwilioCapability(account_sid, auth_token)
+    capability.allow_client_outgoing(os.environ['TWIML_APP_SID'])
 
 
 @app.route('/')
@@ -58,6 +70,26 @@ def get_member(id):
     cp = Congressperson.from_id(pp, er, gpo, pf, cg, id)
     return render_template('member.html', member=cp)
 
+
+@app.route('/members/token', methods=['GET'])
+def get_token():
+    # Generate the capability token
+
+    token = capability.generate()
+
+    return jsonify({'token': token})
+
+
+@app.route('/members/call', methods=['POST'])
+def call():
+    """Returns TwiML instructions to Twilio's POST requests"""
+    response = twiml.Response()
+
+    TWILIO_PHONE_NUMBER="+19149158087"
+    with response.dial(callerId=TWILIO_PHONE_NUMBER) as dial:
+        dial.number('+16463976379')
+
+    return str(response)
 
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
 def get_votes(congress, chamber, session, roll_call):

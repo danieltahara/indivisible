@@ -7,6 +7,7 @@ eventregistry==6.1.6
 feedparser==5.2.1
 Flask==0.12
 Flask-Bootstrap==3.3.7.1
+Flask-SQLAlchemy==2.1
 httplib2==0.10.3
 itsdangerous==0.24
 jellyfish==0.5.1
@@ -17,6 +18,7 @@ pyparsing==2.1.10
 pytz==2016.10
 requests==2.13.0
 six==1.10.0
+SQLAlchemy==1.1.5
 twilio==5.7.0
 us==0.9.1
 visitor==0.1.3

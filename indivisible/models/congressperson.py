@@ -21,7 +21,7 @@ class Congressperson(Base):
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
     district = Column(String(4))
-    member_json = Column(String(4096), nullable=False)
+    member_json = Column(String(8192), nullable=False)
     last_updated = Column(DateTime, nullable=False,
                           server_default=func.now(),
                           server_onupdate=func.now())
@@ -44,6 +44,8 @@ class Congressperson(Base):
     def __init__(self, id):
         self.id = id
         self.__member = self.pp.get_member_by_id(id)
+        if len(self.__member['roles']) > 2:
+            self.__member['roles'] = self.__member['roles'][:2]
         self.member_json = json.dumps(self.__member)
         self.last_name = HTMLParser().unescape(self.member['last_name'])
         self.first_name = HTMLParser().unescape(self.member['first_name'])

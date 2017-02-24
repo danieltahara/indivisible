@@ -20,8 +20,8 @@ class Congressperson(Base):
     first_name = Column(String(30), nullable=False)
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
-    district = Column(Integer)
-    member_json = Column(String(2048), nullable=False)
+    district = Column(String(4))
+    member_json = Column(String(4096), nullable=False)
     last_updated = Column(DateTime, nullable=False,
                           server_default=func.now(),
                           server_onupdate=func.now())

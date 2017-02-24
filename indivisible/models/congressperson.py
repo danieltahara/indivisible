@@ -1,41 +1,63 @@
-from collections import defaultdict
+from six.moves.html_parser import HTMLParser
 import datetime
 import feedparser
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    DateTime,
+    func,
+)
+
+from database import Base
 
 
-class Congressperson(object):
+class Congressperson(Base):
+    __tablename__ = 'congressperson'
+    id = Column(String(10), primary_key=True)
+    last_name = Column(String(30), nullable=False)
+    first_name = Column(String(30), nullable=False)
+    chamber = Column(String(10), nullable=False)
+    state = Column(String(2), nullable=False)
+    district = Column(Integer)
+    member = Column(String(2048), nullable=False)
+    last_updated = Column(DateTime, nullable=False,
+                          server_default=func.now(),
+                          server_onupdate=func.now())
 
     @classmethod
-    def from_id(cls, pp, er, gpo, pf, cg, id):
+    def initialize_datasources(cls, pp, er, gpo, pf, cg):
         """
-        Create a Congressperson from the following datasources:
+        Initialize class with the following datasources:
             * ProPublica
             * EventRegistry
             * GPO
             * Politifact
-        as well as a Congress and ID
         """
-        member = pp.get_member_by_id(id)
-        if member is None:
-            return None
-        return cls(pp, er, gpo, pf, cg, member)
+        cls.pp = pp
+        cls.er = er
+        cls.gpo = gpo
+        cls.pf = pf
+        cls.cg = cg  # TODO (tahara): make this a column/join key
 
-    def __init__(self, pp, er, gpo, pf, cg, member):
-        self.pp = pp
-        self.er = er
-        self.gpo = gpo
-        self.pf = pf
-        self.cg = cg
-        self.member = member
+    def __init__(self, id):
+        self.id = id
+        self.member = self.pp.get_member_by_id(id)
+        h = HTMLParser()
+        self.last_name = h.unescape(self.member['last_name'])
+        self.first_name = h.unescape(self.member['first_name'])
+        self.chamber = self.member['roles'][0]['chamber']
+        self.state = self.member['roles'][0]['state']
+        self.district = self.member['roles'][0]['district']
 
     def get_id(self):
-        return self.member['member_id']
+        return self.member_id
 
     def get_last_name(self):
-        return self.member['last_name']
+        return self.last_name
 
     def get_first_name(self):
-        return self.member['first_name']
+        return self.first_name
 
     def get_name(self):
         return " ".join([self.get_first_name(), self.get_last_name()])
@@ -61,13 +83,13 @@ class Congressperson(object):
         return self.member['url']
 
     def get_state(self):
-        return self.member['roles'][0]['state']
+        return self.state
 
     def get_chamber(self):
-        return self.member['roles'][0]['chamber']
+        return self.chamber
 
     def get_district(self):
-        return self.member['roles'][0]['district']
+        return self.district
 
     def get_committees(self):
         current_committees = self.member['roles'][0]['committees']

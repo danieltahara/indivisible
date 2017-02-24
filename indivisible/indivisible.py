@@ -22,6 +22,7 @@ from datasources.propublica import ProPublica
 from datasources.senategov import SenateGov
 from models.congress import Congress
 from models.congressperson import Congressperson
+from models.database import db_session
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -33,10 +34,11 @@ dhg = DocsHouseGov()
 sg = SenateGov()
 pf = Politifact()
 cg = Congress(pp, er, gpo, pf, dhg, sg, 115)
+Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
 
 # Create a TwilioCapability object with our Twilio API credentials
 capability = None
-twilio_phone_number =os.environ.get('TWILIO_PHONE_NUMBER', None)
+twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER', None)
 if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
     # Allow our users to make outgoing calls with Twilio Client
     account_sid = os.environ['TWILIO_ACCOUNT_SID']
@@ -68,7 +70,11 @@ def search_members_by_location():
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.from_id(pp, er, gpo, pf, cg, id)
+    cp = Congressperson.query.filter(Congressperson.id == id).first()
+    if not cp:
+        cp = Congressperson(id)
+        db_session.add(cp)
+        db_session.commit()
     return render_template('member.html', member=cp)
 
 
@@ -76,7 +82,6 @@ def get_member(id):
 def get_token():
     if capability is not None:
         token = capability.generate()
-        page = request.args.get('forPage')
         return jsonify({'token': token})
     else:
         response = jsonify({"error": "Missing capability"})
@@ -148,6 +153,11 @@ def get_politifact(last_name, first_name):
         "statements".format(last_name=last_name.lower(),
                             first_name=first_name.lower())
     return redirect(url, 302)
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 @app.context_processor

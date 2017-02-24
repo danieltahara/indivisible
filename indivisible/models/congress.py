@@ -2,8 +2,6 @@ from collections import defaultdict
 import datetime
 import json
 
-from congressperson import Congressperson
-
 
 class Congress(object):
     SENATE = 'senate'
@@ -150,8 +148,9 @@ class Congress(object):
         return committees
 
     def _make_cp_from_self(self, id):
-        return Congressperson.from_id(self.pp, self.er, self.gpo, self.pf,
-                                      self, id)
+        from congressperson import Congressperson
+
+        return Congressperson(id)
 
 
 def json_pretty(j):

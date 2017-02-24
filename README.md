@@ -66,14 +66,14 @@ git clone git@github.com:danieltahara/indivisible.git
 * Add an app.conf as per Digital Ocean
   [instructions](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps):
 ~~~
-sudo vim /etc/apache2/sites-available/FlaskApp.conf
+sudo vim /etc/apache2/sites-available/indivisible.conf
 ~~~
 ~~~
 WSGIPythonHome /var/www/indivisible/venv/bin
 WSGIPythonPath /var/www/indivisible/venv/lib/python2.7/site-packages
 
 <VirtualHost *:80>
-    ServerName YOUR_IP_ADDR
+    ServerName YOUR_IP_ADDR_OR_DOMAIN
     ServerAdmin YOUR_EMAIL_ADDR
     WSGIScriptAlias / /var/www/indivisible/indivisible.wsgi
     WSGIScriptReloading On
@@ -118,4 +118,9 @@ sudo a2ensite indivisible
 * Restart apache
 ~~~
 sudo service apache2 restart
+~~~
+* Optionally install SSL certs using [Let's Encrypt](https://certbot.eff.org/#ubuntuxenial-apache):
+~~~
+sudo apt-get install python-letsencrypt-apache
+letsencrypt apache
 ~~~

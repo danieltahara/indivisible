@@ -96,7 +96,7 @@
 <tr>
   <td><em>{{office["City"]}}</em></td>
   <td>
-    <button onclick="callCongressperson('+16463976379')" type="button" class="btn btn-primary btn-lg call-congressperson-button">
+    <button onclick="callCongressperson({{office['Phone']}})" type="button" class="btn btn-primary btn-lg call-congressperson-button">
     <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
       {{ office["Phone"] }}
     </button>

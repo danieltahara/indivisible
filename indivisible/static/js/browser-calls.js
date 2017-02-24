@@ -28,9 +28,9 @@ Twilio.Device.error(function (error) {
 /* Callback for when Twilio Client initiates a new connection */
 Twilio.Device.connect(function (connection) {
     // Enable the hang up button and disable the call buttons
-    $(".hangup-button").prop("disabled", false);
     $(".call-congressperson-button").prop("disabled", true);
     $(".congress-dialer").prop("hidden", false);
+    $(".hangup-button").prop("disabled", false);
 
     updateCallStatus("In call with " + connection.message.phoneNumber);
 });
@@ -38,9 +38,9 @@ Twilio.Device.connect(function (connection) {
 /* Callback for when a call ends */
 Twilio.Device.disconnect(function(connection) {
     // Disable the hangup button and enable the call buttons
+    $(".congress-dialer").prop("hidden", true);
     $(".hangup-button").prop("disabled", true);
     $(".call-congressperson-button").prop("disabled", false);
-    $(".congress-dialer").prop("hidden", true);
 
     updateCallStatus("Ready");
 });

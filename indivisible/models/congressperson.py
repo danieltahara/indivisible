@@ -2,15 +2,15 @@ from six.moves.html_parser import HTMLParser
 import datetime
 import feedparser
 import json
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    DateTime,
-    func,
-)
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy import DateTime
+from sqlalchemy import func
 
 from database import Base
+from database import db_session
+from committee import Committee
 
 
 class Congressperson(Base):
@@ -18,16 +18,18 @@ class Congressperson(Base):
     id = Column(String(10), primary_key=True)
     last_name = Column(String(30), nullable=False)
     first_name = Column(String(30), nullable=False)
+    congress = Column(Integer, nullable=False) # FOREIGN KEY
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
     district = Column(String(4))
     member_json = Column(String(8192), nullable=False)
+    member_hash = Column(String(32), nullable=False) # TODO
     last_updated = Column(DateTime, nullable=False,
                           server_default=func.now(),
                           server_onupdate=func.now())
 
     @classmethod
-    def initialize_datasources(cls, pp, er, gpo, pf, cg):
+    def initialize_datasources(cls, pp, er, gpo, pf):
         """
         Initialize class with the following datasources:
             * ProPublica
@@ -39,7 +41,16 @@ class Congressperson(Base):
         cls.er = er
         cls.gpo = gpo
         cls.pf = pf
-        cls.cg = cg  # TODO (tahara): make this a column/join key
+
+    @classmethod
+    def get_or_create(cls, id):
+        cp = cls.query.filter(cls.id == id).first()
+        if not cp:
+            cp = cls(id)
+            db_session.add(cp)
+            db_session.commit()
+        # else if last_update > 1 day ago...
+        return cp
 
     def __init__(self, id):
         self.id = id
@@ -47,8 +58,10 @@ class Congressperson(Base):
         if len(self.__member['roles']) > 2:
             self.__member['roles'] = self.__member['roles'][:2]
         self.member_json = json.dumps(self.__member)
+        self.member_hash = "ABC"  # TODO
         self.last_name = HTMLParser().unescape(self.member['last_name'])
         self.first_name = HTMLParser().unescape(self.member['first_name'])
+        self.congress = self.member['roles'][0]['congress']
         self.chamber = self.member['roles'][0]['chamber']
         self.state = self.member['roles'][0]['state']
         self.district = self.member['roles'][0]['district']
@@ -107,11 +120,12 @@ class Congressperson(Base):
         return self.district
 
     def get_committees(self):
-        current_committees = self.member['roles'][0]['committees']
-        if len(current_committees) == 0 and len(self.member['roles']) > 1:
-            return self.member['roles'][1]['committees']
-        else:
-            return current_committees
+        committees = self.member['roles'][0]['committees']
+        if len(committees) == 0 and len(self.member['roles']) > 1:
+            committees = self.member['roles'][1]['committees']
+        return [Committee.query.filter(
+            Committee.congress == self.congress).filter(
+                Committee.code == c['code']).first() for c in committees]
 
     def get_offices(self):
         return self.gpo.get_offices(self.get_last_name(),
@@ -162,9 +176,12 @@ class Congressperson(Base):
             self.get_first_name(), self.get_last_name(), limit=limit)
 
     def get_events(self):
+        from congress import Congress # FIXME hack to get around circular ref
+        cg = Congress.get_or_create(self.congress)
+
         result = []
         for c in self.get_committees():
-            events = self.cg.get_events_for_committee(self.get_chamber(), c['code'])
+            events = cg.get_events_for_committee(self.get_chamber(), c.code)
             for event in events:
                 result.append((event['date'], event))
         return sorted(result, key=lambda ev: ev[0])

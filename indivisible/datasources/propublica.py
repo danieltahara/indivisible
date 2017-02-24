@@ -11,8 +11,9 @@ class ProPublica(object):
     def get_base_url(version):
         return "https://api.propublica.org/congress/{}/".format(version)
 
-    def __init__(self, key):
-        self.key = key
+    @classmethod
+    def initialize(cls, key):
+        cls.key = key
 
     def get_member_by_id(self, id):
         """
@@ -74,6 +75,16 @@ class ProPublica(object):
         """
         results = self._get("members/{id}/votes.json".format(id=id))
         return results[0]['votes'] if results else []
+
+    def get_committee(self, congress, chamber, code):
+        results = self._get("{congress}/{chamber}/committees/{code}.json".format(
+            congress=congress, chamber=chamber.lower(), code=code))
+        if results:
+            c = results[0]
+            c['committee'] = HTMLParser().unescape(c['committee'])
+            return c
+        else:
+            return None
 
     def get_committees(self, congress, chamber):
         """

@@ -10,5 +10,7 @@ Base.query = db_session.query_property()
 
 
 def init_db():
+    import committee
+    import congress
     import congressperson
     Base.metadata.create_all(bind=engine)

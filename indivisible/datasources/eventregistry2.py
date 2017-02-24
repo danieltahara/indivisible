@@ -10,10 +10,13 @@ class EventRegistry2(EventRegistry):
     Wrapper around EventRegistry API
     """
 
-    def __init__(self, key):
-        self.key = key
+    @classmethod
+    def initialize(cls, key):
+        cls.key = key
+
+    def __init__(self):
         super(EventRegistry2, self).__init__(
-            host="http://eventregistry.org", apiKey=key)
+            host="http://eventregistry.org", apiKey=self.key)
 
     def get_events(self, thing, limit=0):
         query = QueryEvents(lang='eng')

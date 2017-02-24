@@ -1,4 +1,5 @@
 import requests
+from unidecode import unidecode
 from urlparse import urljoin
 
 
@@ -20,8 +21,8 @@ class Politifact(object):
         limit = limit if limit > 0 else 10
         results = self._get(
             "statements/truth-o-meter/people/{first_name}-{last_name}/"
-            "json/?n={limit}".format(first_name=first_name.lower(),
-                                     last_name=last_name.lower(),
+            "json/?n={limit}".format(first_name=unidecode(first_name.lower()),
+                                     last_name=unidecode(last_name.lower()),
                                      limit=limit))
         return results if results else []
 

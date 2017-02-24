@@ -20,6 +20,7 @@ from datasources.gpo import GPO
 from datasources.politifact import Politifact
 from datasources.propublica import ProPublica
 from datasources.senategov import SenateGov
+from models.committee import Committee
 from models.congress import Congress
 from models.congressperson import Congressperson
 from models.database import db_session
@@ -27,14 +28,22 @@ from models.database import db_session
 app = Flask(__name__)
 Bootstrap(app)
 
-pp = ProPublica(os.environ['PROPUBLICA_API_KEY'])
-er = EventRegistry2(os.environ['EVENT_REGISTRY_API_KEY'])
+ProPublica.initialize(os.environ['PROPUBLICA_API_KEY'])
+EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
+
+pp = ProPublica()
+er = EventRegistry2()
 gpo = GPO(os.environ['GPO_DATA_PATH'])
 dhg = DocsHouseGov()
 sg = SenateGov()
 pf = Politifact()
-cg = Congress(pp, er, gpo, pf, dhg, sg, 115)
-Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
+
+Committee.initialize_datasources(pp)
+Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
+Congressperson.initialize_datasources(pp, er, gpo, pf)
+
+cg = Congress(115)
+cg.prefetch()
 
 # Create a TwilioCapability object with our Twilio API credentials
 capability = None
@@ -54,27 +63,17 @@ def main():
 
 @app.route('/members/search')
 def search_members():
-    name = request.args.get('q')
-    members = cg.search_members(name)
-    return render_template('members_search.html', members=members)
-
-
-@app.route('/members/location_search')
-def search_members_by_location():
-    state = request.args.get('state')
-    district = request.args.get('district')
-    members = cg.get_senators(state)
-    members.extend(cg.get_representative(state, district))
+    name = request.args.get('name', None)
+    chamber = request.args.get('chamber', None)
+    state = request.args.get('state', None)
+    district = request.args.get('district', None)
+    members = cg.search_members(name=name, chamber=chamber, state=state, district=district)
     return render_template('members_search.html', members=members)
 
 
 @app.route('/members/<id>')
 def get_member(id):
-    cp = Congressperson.query.filter(Congressperson.id == id).first()
-    if not cp:
-        cp = Congressperson(id)
-        db_session.add(cp)
-        db_session.commit()
+    cp = Congressperson.get_or_create(id)
     return render_template('member.html', member=cp)
 
 
@@ -112,7 +111,7 @@ def call_new():
             response.status_code = 500
             return response
 
-        cp = Congressperson.from_id(pp, er, gpo, pf, cg, member_id)
+        cp = Congressperson.get_or_create(member_id)
 
         office_id = request.form.get('office_id', 0)
         offices = cp.get_offices()

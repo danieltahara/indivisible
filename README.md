@@ -16,7 +16,7 @@ On Linux:
 sudo apt-get install python-pip
 sudo apt-get install python-virtualenv
 ~~~
-On Mac OSX (with [Homebrew](https://brew.sh/):
+On Mac OSX (with [Homebrew](https://brew.sh/)):
 ~~~
 brew install python-pip
 sudo pip install virtualenv
@@ -35,18 +35,27 @@ pip install -r requirements.txt
 
 * Request an API key from [ProPublica](https://www.propublica.org/datastore/api/propublica-congress-api)
 * Request an API key from [Event Registry](https://www.eventregistry.org)
+* [Optional] Request credentials from [Twilio](https://www.twilio.com/) and a phone number and [application sid](https://www.twilio.com/console/voice/dev-tools/twiml-apps):
 * Save the API keys in a local file, along with path to GPO data:
 ~~~
 PROPUBLICA_API_KEY="PASTE_API_KEY_HERE"
 EVENT_REGISTRY_API_KEY="PASTE_API_KEY_HERE"
+...
 GPO_DATA_PATH="/path/to/data/assets/gpo-114.json"
 ~~~
 
 * Install DB of choice.
-* Add database URI:
 ~~~
-DB_ADDR="sqlite:////tmp/test.db"
+sudo apt-get install mysql-server
+sudo mysql_secure_installation
+mysqld --initialize
 ~~~
+
+* Add database URI to configs:
+~~~
+DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible"
+~~~
+
 * Initialize DB:
 ~~~
 env $(cat indivisible.cfg | xargs) python

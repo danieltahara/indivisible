@@ -1,6 +1,7 @@
 from six.moves.html_parser import HTMLParser
 import datetime
 import feedparser
+import json
 from sqlalchemy import (
     Column,
     Integer,
@@ -20,7 +21,7 @@ class Congressperson(Base):
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
     district = Column(Integer)
-    member = Column(String(2048), nullable=False)
+    member_json = Column(String(2048), nullable=False)
     last_updated = Column(DateTime, nullable=False,
                           server_default=func.now(),
                           server_onupdate=func.now())
@@ -42,16 +43,28 @@ class Congressperson(Base):
 
     def __init__(self, id):
         self.id = id
-        self.member = self.pp.get_member_by_id(id)
-        h = HTMLParser()
-        self.last_name = h.unescape(self.member['last_name'])
-        self.first_name = h.unescape(self.member['first_name'])
+        self.__member = self.pp.get_member_by_id(id)
+        self.member_json = json.dumps(self.__member)
+        self.last_name = HTMLParser().unescape(self.member['last_name'])
+        self.first_name = HTMLParser().unescape(self.member['first_name'])
         self.chamber = self.member['roles'][0]['chamber']
         self.state = self.member['roles'][0]['state']
         self.district = self.member['roles'][0]['district']
 
+    @property
+    def member(self):
+        try:
+            self.__member
+        except AttributeError:
+            self.__member = json.loads(self.member_json)
+        return self.__member
+
+    @member.setter
+    def member(self, member):
+        self.__member = member
+
     def get_id(self):
-        return self.member_id
+        return self.id
 
     def get_last_name(self):
         return self.last_name

@@ -70,7 +70,11 @@ class Congressperson(object):
         return self.member['roles'][0]['district']
 
     def get_committees(self):
-        return self.member['roles'][0]['committees']
+        current_committees = self.member['roles'][0]['committees']
+        if len(current_committees) == 0 and len(self.member['roles']) > 1:
+            return self.member['roles'][1]['committees']
+        else:
+            return current_committees
 
     def get_offices(self):
         return self.gpo.get_offices(self.get_last_name(),

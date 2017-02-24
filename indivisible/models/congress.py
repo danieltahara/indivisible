@@ -111,7 +111,7 @@ class Congress(object):
         """
         committees = self.get_committees_by_name(chamber)
         all_events = []
-        if chamber == self.HOUSE:
+        if chamber.upper() == self.HOUSE.upper():
             today = datetime.date.today()
             for i in range(days):
                 date = today + datetime.timedelta(days=i)

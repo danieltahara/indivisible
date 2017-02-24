@@ -42,6 +42,17 @@ EVENT_REGISTRY_API_KEY="PASTE_API_KEY_HERE"
 GPO_DATA_PATH="/path/to/data/assets/gpo-114.json"
 ~~~
 
+* Install DB of choice.
+* Add database URI:
+~~~
+DB_ADDR="sqlite:////tmp/test.db"
+~~~
+* Initialize DB:
+~~~
+env $(cat indivisible.cfg | xargs) python
+from indivisible.models.database import init_db
+init_db()
+~~~
 
 ## How to run:
 ~~~

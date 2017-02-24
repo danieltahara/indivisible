@@ -92,7 +92,7 @@ def call():
     with response.dial(callerId=twilio_phone_number) as dial:
         dial.number("+16463976379")
 
-    return response
+    return str(response)
 
 
 @app.route('/members/call_new', methods=['POST'])

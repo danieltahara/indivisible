@@ -29,7 +29,7 @@ class Congressperson(Base):
                           server_onupdate=func.now())
 
     @classmethod
-    def initialize_datasources(cls, pp, er, gpo, pf):
+    def initialize_datasources(cls, pp, er, gpo, pf, cg):
         """
         Initialize class with the following datasources:
             * ProPublica
@@ -41,6 +41,7 @@ class Congressperson(Base):
         cls.er = er
         cls.gpo = gpo
         cls.pf = pf
+        cls.cg = cg  # TODO: get rid of this dep
 
     @classmethod
     def get_or_create(cls, id):
@@ -123,9 +124,8 @@ class Congressperson(Base):
         committees = self.member['roles'][0]['committees']
         if len(committees) == 0 and len(self.member['roles']) > 1:
             committees = self.member['roles'][1]['committees']
-        return [Committee.query.filter(
-            Committee.congress == self.congress).filter(
-                Committee.code == c['code']).first() for c in committees]
+        return [Committee.get_or_create(self.congress, self.chamber, c['code'])
+                for c in committees]
 
     def get_offices(self):
         return self.gpo.get_offices(self.get_last_name(),
@@ -176,12 +176,9 @@ class Congressperson(Base):
             self.get_first_name(), self.get_last_name(), limit=limit)
 
     def get_events(self):
-        from congress import Congress # FIXME hack to get around circular ref
-        cg = Congress.get_or_create(self.congress)
-
         result = []
         for c in self.get_committees():
-            events = cg.get_events_for_committee(self.get_chamber(), c.code)
+            events = self.cg.get_events(self.get_chamber(), c.code)
             for event in events:
                 result.append((event['date'], event))
         return sorted(result, key=lambda ev: ev[0])

@@ -40,10 +40,10 @@ pf = Politifact()
 
 Committee.initialize_datasources(pp)
 Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
-Congressperson.initialize_datasources(pp, er, gpo, pf)
-
-cg = Congress(115)
+cg = Congress.get_or_create(115)
 cg.prefetch()
+Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
+
 
 # Create a TwilioCapability object with our Twilio API credentials
 capability = None

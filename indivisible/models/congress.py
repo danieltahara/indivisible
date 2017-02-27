@@ -42,26 +42,27 @@ class Congress(Base):
         cls.dhg = dhg
         cls.sg = sg
 
-    def get_or_create(self, congress):
+    @classmethod
+    def get_or_create(cls, congress):
         cg = cls.query.filter(cls.congress == congress).first()
         if not cg:
             cg = cls(congress)
-            db_session.add(cp)
+            db_session.add(cg)
             db_session.commit()
+            cg.prefetch()
         return cg
 
     def __init__(self, congress):
         self.congress = congress
 
+    def prefetch(self):
         self.members = {}
         self.committees = {}
         self.events = {}
-
-    def prefetch(self):
         for chamber in [self.SENATE, self.HOUSE]:
             self.get_members(chamber)
             self.get_committees(chamber)
-            self.get_events(chamber)
+            #self.get_events(chamber)
 
     def get_all_members(self):
         return self.get_members(self.HOUSE) + self.get_members(self.SENATE)
@@ -151,6 +152,7 @@ class Congress(Base):
             today = datetime.datetime.today()
             for i in range(days):
                 date = today + datetime.timedelta(days=i)
+                print date
                 all_events.extend(self.dhg.get_events(date))
         else:
             all_events.extend(self.sg.get_events(None))

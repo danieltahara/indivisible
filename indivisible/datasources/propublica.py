@@ -81,6 +81,7 @@ class ProPublica(object):
             congress=congress, chamber=chamber.lower(), code=code))
         if results:
             c = results[0]
+            del c['former_members']
             c['committee'] = HTMLParser().unescape(c['committee'])
             return c
         else:

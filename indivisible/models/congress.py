@@ -6,6 +6,7 @@ from sqlalchemy import DateTime
 from sqlalchemy import func
 from sqlalchemy import Integer
 from sqlalchemy import or_
+import us
 
 from database import Base
 from database import db_session

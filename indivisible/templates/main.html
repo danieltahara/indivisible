@@ -4,80 +4,35 @@
 {{ super() }}
 <div class="container">
   <div class="page-header">
-    <h2>Welcome to the Indivisible Guide</h2>
+    <h2>We Are Indivisible</h2>
   </div>
-  <div class="container" id="members">
-    <div class="row"><div class="col-md-12"><h4>Find your representatives:</h4></div></div>
-    <div class="row">
-      <div class="col-md-2"><input class="form-control search" placeholder="Search by Name" /></div>
-      <div class="col-md-2">
-        <select class="form-control chamber_s">
-          <option selected value> -- Select a Chamber -- </option>
-          <option value="Senate">Senate</option>
-          <option value="House">House</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="form-control state_s">
-          <option selected value> -- Select a State -- </option>
-          {% for state in all_states %}
-          <option value="{{state.abbr}}">{{state.name}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-md-2"><input class="form-control district_s" placeholder="District" /></div>
-      <div class="col-md-2 col-md-push-2">
-        <button type="button" class="btn btn-primary sort" data-sort="name">Sort by name</button>
-      </div>
+  <div class="row"><div class="col-md-12">
+    <p>Your members of Congress are your voice on Capitol Hill, and with just a little bit of
+      effort, you can have your voice heard. This is the mantra of the <a href="https://www.indivisibleguide.com">Indivisible Guide</a>.
+    </p>
+    <p>This website is here to help you express your voice. It provides all the information you need
+      to stay up to date on your members of Congress -- their contact info, public statements, and
+      vote records, among others -- in one convenient place. You can even call them directly from
+      their profile page!
+    </p>
+    <p>
+      My primary goal was to make accessible all the free and wonderful resources that exist to help
+      stay politically informed, so rather than provide any analysis tools on the site, I link out
+      to those resources when relevant. If I missed any of your favorites, please let me know.
+    </p>
+    <p>
+      So let's get started, shall we?
+    </p>
+  </div></div>
+  <div class="row">
+    <div class="col-md-6 text-center">
+      <a class="btn btn-block btn-primary" type="button"
+        href={{url_for('get_whats_hot')}}>See What's Hot</a>
     </div>
-
-    <table class="table table-striped">
-      <thead>
-        <th>Name</th>
-        <th>Chamber</th>
-        <th>State</th>
-        <th>District</th>
-      </thead>
-      <tbody class="list">
-        {% for member in cg.get_all_members() %}
-        <tr>
-          <td class="name"><a href={{url_for('get_member', id=member['id'])}}>
-              {{member['last_name']}}, {{member['first_name']|safe}}
-          </a></td>
-          <td class="chamber">{{member['chamber']}}</td>
-          <td class="state">{{member['state']}}</td>
-          <td class="district">{{member['district'] or 'N/A'}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script>
-    $(document).ready(function(){
-      var options = { valueNames: ['name', 'state', 'district', 'chamber'], };
-      var memberList = new List('members', options);
-
-      var updateList = function(){
-        var chamber = $(".chamber_s").val()
-        var state = $(".state_s").val()
-        var district = $(".district_s").val()
-
-        memberList.filter(function(item) {
-          return (!state || item.values().state == state) &&
-            (!district || item.values().district == district) &&
-            (!chamber || item.values().chamber == chamber)
-        });
-      }
-
-      $(function(){
-        updateList();
-        $(".chamber_s").change(updateList);
-        $(".state_s").change(updateList);
-        $(".district_s").change(updateList);
-      });
-    });
-  </script>
+    <div class="col-md-6 text-center">
+      <a class="btn btn-block btn-primary" type="button"
+        href="/members">Find Your Reps</a>
+    </div>
   </div>
 </div>
 {% endblock %}

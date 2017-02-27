@@ -15,6 +15,7 @@ from twilio import twiml
 from urlparse import urljoin
 import us
 
+from datasources.congressgov import CongressGov
 from datasources.docshousegov import DocsHouseGov
 from datasources.eventregistry2 import EventRegistry2
 from datasources.gpo import GPO
@@ -35,6 +36,7 @@ EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
 pp = ProPublica()
 er = EventRegistry2()
 gpo = GPO(os.environ['GPO_DATA_PATH'])
+cog = CongressGov()
 dhg = DocsHouseGov()
 sg = SenateGov()
 pf = Politifact()
@@ -60,7 +62,18 @@ if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
 
 @app.route('/')
 def main():
-    return render_template("main.html", cg=cg, all_states=us.states.STATES)
+    return render_template("main.html")
+
+
+@app.route('/whatshot')
+def get_whats_hot():
+    bills = cog.get_hot_bills()
+    return render_template("whatshot.html", hot_bills=bills)
+
+
+@app.route('/members')
+def get_members():
+    return render_template("members.html", cg=cg, all_states=us.states.STATES)
 
 
 @app.route('/members/search')

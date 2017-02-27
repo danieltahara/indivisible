@@ -18,6 +18,7 @@
           <li class="active"><a data-toggle="tab" href="#contact">Contact</a></li>
           <li><a data-toggle="tab" href="#events">Calendar</a></li>
           <li><a data-toggle="tab" href="#votes">Votes</a></li>
+          <li><a data-toggle="tab" href="#bills">Cosponsored Bills</a></li>
           <li><a data-toggle="tab" href="#statements">Statements</a></li>
           <li><a data-toggle="tab" href="#news">News</a></li>
           <li><a data-toggle="tab" href="#report-card">Politifact</a></li>
@@ -86,6 +87,24 @@
             <tbody>
               {% for vote in member.get_votes(20) -%}
               {{macros.render_vote(vote)}}
+              {%- endfor %}
+          </tbody>
+          </table>
+        </div>
+
+        <div class="member-bills tab-pane fade" id="bills">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Bill</th>
+                <th></th>
+                <th>Last Action</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bill in member.get_bills(20) -%}
+              {{macros.render_bill(bill)}}
               {%- endfor %}
           </tbody>
           </table>

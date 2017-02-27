@@ -142,6 +142,16 @@ class Congressperson(Base):
         votes = self.pp.get_member_votes(self.get_id())
         return votes[:last_n] if last_n > 0 else votes
 
+    def get_bills(self, limit=0):
+        """
+        Get votes by congressperson.
+
+        @param limit: if > 0, limit on number of votes to return.
+        @return: Bills sponsored by congressperson.
+        """
+        bills = self.pp.get_member_bills(self.get_id())
+        return bills[:limit] if limit > 0 else bills
+
     def get_news(self, limit=0):
         """
         Get new events related to congressperson using EventRegistry API

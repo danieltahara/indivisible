@@ -46,6 +46,7 @@ class GPO(object):
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(), path)
+        print url
         resp = requests.get(url, params, headers=headers)
         if resp.status_code != 200:
             return None

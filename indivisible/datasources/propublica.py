@@ -76,6 +76,16 @@ class ProPublica(object):
         results = self._get("members/{id}/votes.json".format(id=id))
         return results[0]['votes'] if results else []
 
+    def get_member_bills(self, id):
+        """
+        Get votes for given memer
+
+        @param id: member-id
+        @return: bills
+        """
+        results = self._get("members/{id}/bills/cosponsored.json".format(id=id))
+        return results[0]['bills'] if results else []
+
     def get_committee(self, congress, chamber, code):
         results = self._get("{congress}/{chamber}/committees/{code}.json".format(
             congress=congress, chamber=chamber.lower(), code=code))

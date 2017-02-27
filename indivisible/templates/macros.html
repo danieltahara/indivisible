@@ -137,3 +137,13 @@
 </tr>
 {%- endmacro %}
 
+{% macro render_bill(bill) -%}
+<tr>
+  <td><a href={{url_for('get_bill', congress=bill['congress'], number=bill['number'])}}>
+    {{bill['number']}}</a></td>
+  <td>{{bill['title']}}</td>
+  <td>{{bill['latest_major_action']}}</td>
+  <td>{{bill['latest_major_action_date']}}</td>
+</tr>
+{%- endmacro %}
+

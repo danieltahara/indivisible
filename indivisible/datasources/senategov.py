@@ -41,6 +41,7 @@ class SenateGov(object):
         return events
 
     def _get(self, path, params={}, headers={}):
+        print self.get_base_url()
         resp = requests.get(self.get_base_url())
         if resp.status_code != 200:
             return None

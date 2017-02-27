@@ -152,7 +152,6 @@ class Congress(Base):
             today = datetime.datetime.today()
             for i in range(days):
                 date = today + datetime.timedelta(days=i)
-                print date
                 all_events.extend(self.dhg.get_events(date))
         else:
             all_events.extend(self.sg.get_events(None))

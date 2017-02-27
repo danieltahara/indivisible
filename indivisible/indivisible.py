@@ -9,6 +9,7 @@ from flask import (
 from flask_bootstrap import Bootstrap
 import json
 import os
+import re
 from twilio.util import TwilioCapability
 from twilio import twiml
 from urlparse import urljoin
@@ -138,6 +139,13 @@ def get_votes(congress, chamber, session, roll_call):
 def get_committee(chamber, code):
     return redirect(
         urljoin('https://www.govtrack.us/congress/committees/', code), 302)
+
+
+@app.route('/bills/<congress>/<number>')
+def get_bill(congress, number):
+    url = "https://www.govtrack.us/congress/bills/{congress}/{number}".format(
+        congress=congress, number=re.sub(r"\W", "", number).lower())
+    return redirect(url, 302)
 
 
 @app.route('/news/<uri>')

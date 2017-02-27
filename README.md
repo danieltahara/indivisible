@@ -53,7 +53,7 @@ mysqld --initialize
 
 * Add database URI to configs:
 ~~~
-DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible"
+DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible?charset=utf8"
 ~~~
 
 * Initialize DB:

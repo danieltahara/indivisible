@@ -40,6 +40,7 @@ pf = Politifact()
 
 Committee.initialize_datasources(pp)
 Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
+Congressperson.initialize_datasources(pp, er, gpo, pf, None)
 cg = Congress.get_or_create(115)
 cg.prefetch()
 Congressperson.initialize_datasources(pp, er, gpo, pf, cg)

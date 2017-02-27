@@ -124,8 +124,9 @@ class Congressperson(Base):
         committees = self.member['roles'][0]['committees']
         if len(committees) == 0 and len(self.member['roles']) > 1:
             committees = self.member['roles'][1]['committees']
-        return [Committee.get_or_create(self.congress, self.chamber, c['code'])
+        committees = [Committee.get_or_create(self.congress, self.chamber, c['code'])
                 for c in committees]
+        return [c for c in committees if c is not None]
 
     def get_offices(self):
         return self.gpo.get_offices(self.get_last_name(),
@@ -161,8 +162,9 @@ class Congressperson(Base):
         feed = feedparser.parse(self.member['rss_url'])
         ret = feed['items'][:last_n] if feed['items'] and last_n > 0 else []
         for r in ret:
-            r['date'] = datetime.datetime(*r['published_parsed'][:6]).strftime(
-                '%m-%d-%Y')
+            if r['published_parsed'] is not None:  # e.g. https://amodei.house.gov/rss/news-releases.xml
+                r['date'] = datetime.datetime(*r['published_parsed'][:6]).strftime(
+                    '%m-%d-%Y')
         return ret
 
     def get_politifacts(self, limit=0):

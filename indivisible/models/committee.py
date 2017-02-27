@@ -34,6 +34,8 @@ class Committee(Base):
         c = cls.query.filter(cls.congress == congress).filter(cls.code == code).first()
         if c is None:
             pp_c = cls.pp.get_committee(congress, chamber, code)
+            if pp_c is None:
+                return None  # e.g. SCNC
             c = cls(congress, chamber, code, pp_c)
             db_session.add(c)
             db_session.commit()

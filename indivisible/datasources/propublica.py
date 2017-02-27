@@ -102,6 +102,7 @@ class ProPublica(object):
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.get_base_url(self.version), path)
+        print url
         headers = headers.copy()
         headers.update(self._get_base_headers())
         resp = requests.get(url, headers=headers)

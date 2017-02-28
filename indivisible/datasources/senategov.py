@@ -1,12 +1,13 @@
-from xml.etree import ElementTree
-import requests
 from datetime import datetime
 
+from base import XMLSource
 
-class SenateGov(object):
-    @staticmethod
-    def get_base_url():
-        return "https://www.senate.gov/general/committee_schedules/hearings.xml"
+
+class SenateGov(XMLSource):
+
+    def __init__(self):
+        super(SenateGov, self).__init__(
+            "https://www.senate.gov/general/committee_schedules/hearings.xml")
 
     def get_events(self, date):
         """
@@ -39,11 +40,3 @@ class SenateGov(object):
                 event['name'] = tree.find('matter').text
                 events.append(event)
         return events
-
-    def _get(self, path, params={}, headers={}):
-        print self.get_base_url()
-        resp = requests.get(self.get_base_url())
-        if resp.status_code != 200:
-            return None
-        else:
-            return ElementTree.fromstring(resp.text)

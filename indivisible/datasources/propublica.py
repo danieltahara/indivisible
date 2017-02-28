@@ -3,17 +3,18 @@ import requests
 from urlparse import urljoin
 import us
 
+from base import RESTSource
 
-class ProPublica(object):
+class ProPublica(RESTSource):
     version = "v1"
-
-    @staticmethod
-    def get_base_url(version):
-        return "https://api.propublica.org/congress/{}/".format(version)
 
     @classmethod
     def initialize(cls, key):
         cls.key = key
+
+    def __init__(self):
+        super(ProPublica, self).__init__(
+            "https://api.propublica.org/congress/{}/".format(version))
 
     def get_member_by_id(self, id):
         """
@@ -110,22 +111,18 @@ class ProPublica(object):
             c['name'] = h.unescape(c['name'])
         return ret
 
+
     def _get(self, path, params={}, headers={}):
-        url = urljoin(self.get_base_url(self.version), path)
-        print url
         headers = headers.copy()
         headers.update(self._get_base_headers())
-        resp = requests.get(url, headers=headers)
-        if resp.status_code != 200:
+        results = super(ProPublica, self)._get(path, params=params, headers=headers)
+        if results['status'] == 'ERROR' or results['status'] == '404':
             return None
         else:
-            results = resp.json()
-            if results['status'] == 'ERROR' or results['status'] == '404':
-                return None
-            else:
-                return results['results']
+            return results['results']
 
     def _get_base_headers(self):
         return {
             'X-API-Key': self.key,
         }
+

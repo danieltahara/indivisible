@@ -1,6 +1,6 @@
 import re
 
-from beautifulsoupsource import BeautifulSoupSource
+from base import BeautifulSoupSource
 
 
 class CongressGov(BeautifulSoupSource):

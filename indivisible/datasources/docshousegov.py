@@ -1,13 +1,12 @@
-from bs4 import BeautifulSoup
 import re
-from urlparse import urljoin
-import urllib
+
+from beautifulsoupsource import BeautifulSoupSource
 
 
-class DocsHouseGov(object):
-    @staticmethod
-    def get_base_url():
-        return "http://docs.house.gov/"
+class DocsHouseGov(BeautifulSoupSource):
+
+    def __init__(self):
+        super(DocsHouseGov, self).__init__("https://docs.house.gov/")
 
     def get_events(self, date):
         """
@@ -54,9 +53,3 @@ class DocsHouseGov(object):
             return to_ret
         else:
             return None
-
-    def _get(self, path, params={}, headers={}):
-        url = urljoin(self.get_base_url(), path)
-        soup = BeautifulSoup(urllib.urlopen(url % urllib.urlencode(params)),
-                             "html.parser")
-        return soup

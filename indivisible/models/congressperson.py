@@ -22,6 +22,7 @@ class Congressperson(Base):
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
     district = Column(String(4))
+    image = Column(String(100))
     member_json = Column(String(8192), nullable=False)
     member_hash = Column(String(32), nullable=False) # TODO
     last_updated = Column(DateTime, nullable=False,
@@ -66,6 +67,9 @@ class Congressperson(Base):
         self.chamber = self.member['roles'][0]['chamber']
         self.state = self.member['roles'][0]['state']
         self.district = self.member['roles'][0]['district']
+        member_info = self.gpo.get_member_info(self.get_last_name(),
+                                               self.get_first_name())
+        self.image = member_info.get("ImageUrl", None) if member_info else None
 
     @property
     def member(self):
@@ -92,9 +96,13 @@ class Congressperson(Base):
         return " ".join([self.get_first_name(), self.get_last_name()])
 
     def get_image_url(self):
-        member_info = self.gpo.get_member_info(self.get_last_name(),
-                                               self.get_first_name())
-        return member_info.get("ImageUrl", None) if member_info else None
+        if self.image is None:
+            member_info = self.gpo.get_member_info(self.get_last_name(),
+                                                   self.get_first_name())
+            self.image = member_info.get("ImageUrl", None) if member_info else None
+            if self.image is not None:
+                db_session.commit()
+        return self.image
 
     def get_party(self):
         return self.member['current_party']

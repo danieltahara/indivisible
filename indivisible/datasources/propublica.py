@@ -1,9 +1,9 @@
 from six.moves.html_parser import HTMLParser
 import us
 
-from base import RESTSource
+from base import JSONSource
 
-class ProPublica(RESTSource):
+class ProPublica(JSONSource):
     version = "v1"
 
     @classmethod

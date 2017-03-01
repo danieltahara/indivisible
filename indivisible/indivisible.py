@@ -18,7 +18,7 @@ import us
 from datasources.congressgov import CongressGov
 from datasources.docshousegov import DocsHouseGov
 from datasources.eventregistry2 import EventRegistry2
-from datasources.gpo import GPO
+from datasources.governmentpublishingoffice import GovernmentPublishingOffice
 from datasources.politifact import Politifact
 from datasources.propublica import ProPublica
 from datasources.senategov import SenateGov
@@ -35,7 +35,7 @@ EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
 
 pp = ProPublica()
 er = EventRegistry2()
-gpo = GPO(os.environ['GPO_DATA_PATH'])
+gpo = GovernmentPublishingOffice(114)
 cog = CongressGov()
 dhg = DocsHouseGov()
 sg = SenateGov()

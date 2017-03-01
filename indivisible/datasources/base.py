@@ -28,8 +28,11 @@ class XMLSource(object):
         self.base_url = base_url
 
     def _get(self, path, params={}, headers={}):
-        print self.base_url
-        resp = requests.get(self.get_base_url())
+        url = urljoin(self.base_url, path)
+        if len(params) > 0:
+            url = url % urllib.urlencode(params)
+        print url
+        resp = requests.get(url, headers=headers)
         if resp.status_code != 200:
             return None
         else:
@@ -43,9 +46,9 @@ class RESTSource(object):
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.base_url, path)
+        if len(params) > 0:
+            url = url % urllib.urlencode(params)
         print url
-        headers = headers.copy()
-        headers.update(self._get_base_headers())
         resp = requests.get(url, headers=headers)
         if resp.status_code != 200:
             return None

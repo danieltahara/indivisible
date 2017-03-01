@@ -1,6 +1,4 @@
 from six.moves.html_parser import HTMLParser
-import requests
-from urlparse import urljoin
 import us
 
 from base import RESTSource
@@ -14,7 +12,7 @@ class ProPublica(RESTSource):
 
     def __init__(self):
         super(ProPublica, self).__init__(
-            "https://api.propublica.org/congress/{}/".format(version))
+            "https://api.propublica.org/congress/{}/".format(self.version))
 
     def get_member_by_id(self, id):
         """
@@ -85,7 +83,10 @@ class ProPublica(RESTSource):
         @return: bills
         """
         results = self._get("members/{id}/bills/cosponsored.json".format(id=id))
-        return results[0]['bills'] if results else []
+        results = results[0]['bills'] if results else []
+        for bill in results:
+            bill['title'] = HTMLParser().unescape(bill['title'])
+        return results
 
     def get_committee(self, congress, chamber, code):
         results = self._get("{congress}/{chamber}/committees/{code}.json".format(

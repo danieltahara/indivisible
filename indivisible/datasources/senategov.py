@@ -24,7 +24,7 @@ class SenateGov(XMLSource):
         }
 
         """
-        baseTree = self._get(self.get_base_url())
+        baseTree = self._get('')
         if baseTree is None:
             return []
         trees = baseTree.findall("meeting")

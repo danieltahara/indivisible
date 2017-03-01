@@ -131,7 +131,8 @@ class Congress(Base):
         return self.committees[chamber]
 
     def get_code_for_committee(self, chamber, name):
-        committee = Committee.query.filter(Committee.chamber == chamber).filter(
+        committee = Committee.query.filter(
+            func.lower(Committee.chamber) == func.lower(chamber)).filter(
             func.lower(Committee.name) == func.lower(name)).first()
         return committee.code if committee else None
 

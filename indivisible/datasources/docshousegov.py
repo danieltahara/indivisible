@@ -1,4 +1,5 @@
 import re
+from urlparse import urljoin
 
 from base import BeautifulSoupSource
 
@@ -6,7 +7,7 @@ from base import BeautifulSoupSource
 class DocsHouseGov(BeautifulSoupSource):
 
     def __init__(self):
-        super(DocsHouseGov, self).__init__("https://docs.house.gov/")
+        super(DocsHouseGov, self).__init__("http://docs.house.gov/")
 
     def get_events(self, date):
         """
@@ -41,8 +42,7 @@ class DocsHouseGov(BeautifulSoupSource):
                     event['committee'] = columns[0].find("span").contents[0].strip()
                     a = columns[0].find("a")
                     event['name'] = a.contents[0].strip()
-                    event['url'] = urljoin(
-                        self.get_base_url(),
+                    event['url'] = urljoin(self.base_url,
                         "Committee/Calendar/{}".format(a['href']))
 
                     committees = re.findall(r'[^()]+', event['committee'])

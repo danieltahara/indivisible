@@ -1,3 +1,4 @@
+from six.moves.html_parser import HTMLParser
 import re
 
 from base import BeautifulSoupSource
@@ -25,6 +26,7 @@ class CongressGov(BeautifulSoupSource):
         if table:
             to_ret = []
             rows = table.findAll("tr")
+            h = HTMLParser()
             for row in rows:
                 bills = {}
                 columns = row.findAll("td")
@@ -34,6 +36,6 @@ class CongressGov(BeautifulSoupSource):
                                                  columns[1].contents[1]).groups()[0]
                     bill['congress'] = int(bill['congress'])
                     bill['number'] = columns[1].find("a").contents[0].strip()
-                    bill['title'] = re.sub(r"\"", "", columns[2].contents[0])
+                    bill['title'] = h.unescape(re.sub(r"\"", "", columns[2].contents[0]))
                     to_ret.append(bill)
             return to_ret

@@ -22,7 +22,7 @@ class Congressperson(Base):
     chamber = Column(String(10), nullable=False)
     state = Column(String(2), nullable=False)
     district = Column(String(4))
-    image = Column(String(100))
+    image = Column(String(200))
     member_json = Column(String(8192), nullable=False)
     member_hash = Column(String(32), nullable=False) # TODO
     last_updated = Column(DateTime, nullable=False,

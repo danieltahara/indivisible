@@ -12,7 +12,7 @@ class Congressperson(db.Model):
     id = db.Column(db.String(10), primary_key=True)
     last_name = db.Column(db.String(30), nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
-    congress = db.Column(db.Integer, nullable=False) # FOREIGN KEY
+    congress = db.Column(db.Integer, db.ForeignKey('congress.congress'), nullable=False)
     chamber = db.Column(db.String(10), nullable=False)
     state = db.Column(db.String(2), nullable=False)
     district = db.Column(db.String(4))

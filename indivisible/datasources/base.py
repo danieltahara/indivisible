@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+from unidecode import unidecode
 from urlparse import urljoin
 import urllib
 import urllib2
@@ -36,7 +37,7 @@ class XMLSource(object):
         if resp.status_code != 200:
             return None
         else:
-            return ElementTree.fromstring(resp.text)
+            return ElementTree.fromstring(unidecode(resp.text))
 
 
 class JSONSource(object):

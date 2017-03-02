@@ -1,26 +1,21 @@
 from collections import defaultdict
 import datetime
 import json
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import func
-from sqlalchemy import Integer
 from sqlalchemy import or_
 import us
 
-from database import Base
-from database import db_session
 from committee import Committee
 from congressperson import Congressperson
+from database import db
 
 
 # TODO: periodic refresh
-class Congress(Base):
+class Congress(db.Model):
     __tablename__ = 'congress'
-    congress = Column(Integer, primary_key=True)
-    last_updated = Column(DateTime, nullable=False,
-                          server_default=func.now(),
-                          server_onupdate=func.now())
+    congress = db.Column(db.Integer, primary_key=True)
+    last_updated = db.Column(db.DateTime, nullable=False,
+                          server_default=db.func.now(),
+                          server_onupdate=db.func.now())
 
     SENATE = 'senate'
     HOUSE = 'house'
@@ -45,16 +40,13 @@ class Congress(Base):
 
     @classmethod
     def get_or_create(cls, congress):
-        cg = cls.query.filter(cls.congress == congress).first()
+        cg = cls.query.filter_by(congress=congress).first()
         if not cg:
-            cg = cls(congress)
-            db_session.add(cg)
-            db_session.commit()
+            cg = cls(congress=congress)
+            db.session.add(cg)
+            db.session.commit()
             cg.prefetch()
         return cg
-
-    def __init__(self, congress):
-        self.congress = congress
 
     def prefetch(self):
         self.members = {}
@@ -102,20 +94,19 @@ class Congress(Base):
         @param name: part of a first name or last name.
         @return: list of Congresspersons with given name.
         """
-        members = Congressperson.query.filter(
-            Congressperson.congress == self.congress)
+        members = Congressperson.query.filter_by(congress=self.congress)
         if chamber is not None:
-            members = members.filter(Congressperson.chamber == chamber.capitalize())
+            members = members.filter_by(chamber=chamber.capitalize())
         if state is not None:
             state = us.states.lookup(unicode(state))
             if state is None:
                 return []
-            members = members.filter(Congressperson.state == state.abbr)
+            members = members.filter_by(state=state.abbr)
         if district is not None:
-            members = members.filter(Congressperson.district == district)
+            members = members.filter_by(district=district)
         if name is not None:
             members = members.filter(or_(Congressperson.first_name.contains(name),
-                                 Congressperson.last_name.contains(name)))
+                                         Congressperson.last_name.contains(name)))
         return members.all()
 
     def get_committees(self, chamber):
@@ -132,8 +123,8 @@ class Congress(Base):
 
     def get_code_for_committee(self, chamber, name):
         committee = Committee.query.filter(
-            func.lower(Committee.chamber) == func.lower(chamber)).filter(
-            func.lower(Committee.name) == func.lower(name)).first()
+            db.func.lower(Committee.chamber) == chamber.lower()).filter(
+            db.func.lower(Committee.name) == name.lower()).first()
         return committee.code if committee else None
 
     def get_events(self, chamber, code=None):

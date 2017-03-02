@@ -36,7 +36,11 @@ pip install -r requirements.txt
 * Request an API key from [ProPublica](https://www.propublica.org/datastore/api/propublica-congress-api)
 * Request an API key from [Event Registry](https://www.eventregistry.org)
 * [Optional] Request credentials from [Twilio](https://www.twilio.com/) and a phone number and [application sid](https://www.twilio.com/console/voice/dev-tools/twiml-apps):
-* Save the API keys in a local file:
+* Add the following to a file:
+~~~
+PYTHONPATH=/path/to/repo/indivisible
+~~~
+* Save the API keys to the same file:
 ~~~
 PROPUBLICA_API_KEY="PASTE_API_KEY_HERE"
 EVENT_REGISTRY_API_KEY="PASTE_API_KEY_HERE"

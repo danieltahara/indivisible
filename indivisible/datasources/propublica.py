@@ -3,6 +3,7 @@ import us
 
 from base import JSONSource
 
+
 class ProPublica(JSONSource):
     version = "v1"
 

@@ -2,32 +2,26 @@ from six.moves.html_parser import HTMLParser
 import datetime
 import feedparser
 import json
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import DateTime
-from sqlalchemy import func
 
-from database import Base
-from database import db_session
 from committee import Committee
+from database import db
 
 
-class Congressperson(Base):
+class Congressperson(db.Model):
     __tablename__ = 'congressperson'
-    id = Column(String(10), primary_key=True)
-    last_name = Column(String(30), nullable=False)
-    first_name = Column(String(30), nullable=False)
-    congress = Column(Integer, nullable=False) # FOREIGN KEY
-    chamber = Column(String(10), nullable=False)
-    state = Column(String(2), nullable=False)
-    district = Column(String(4))
-    image = Column(String(200))
-    member_json = Column(String(8192), nullable=False)
-    member_hash = Column(String(32), nullable=False) # TODO
-    last_updated = Column(DateTime, nullable=False,
-                          server_default=func.now(),
-                          server_onupdate=func.now())
+    id = db.Column(db.String(10), primary_key=True)
+    last_name = db.Column(db.String(30), nullable=False)
+    first_name = db.Column(db.String(30), nullable=False)
+    congress = db.Column(db.Integer, nullable=False) # FOREIGN KEY
+    chamber = db.Column(db.String(10), nullable=False)
+    state = db.Column(db.String(2), nullable=False)
+    district = db.Column(db.String(4))
+    image = db.Column(db.String(200))
+    member_json = db.Column(db.String(8192), nullable=False)
+    member_hash = db.Column(db.String(32), nullable=False) # TODO
+    last_updated = db.Column(db.DateTime, nullable=False,
+                             server_default=db.func.now(),
+                             server_onupdate=db.func.now())
 
     @classmethod
     def initialize_datasources(cls, pp, er, gpo, pf, cg):
@@ -46,30 +40,28 @@ class Congressperson(Base):
 
     @classmethod
     def get_or_create(cls, id):
-        cp = cls.query.filter(cls.id == id).first()
+        cp = cls.query.filter_by(id=id).first()
         if not cp:
-            cp = cls(id)
-            db_session.add(cp)
-            db_session.commit()
+            member = cl.pp.get_member_by_id(id)
+            if len(member['roles']) > 2:
+                member['roles'] = member['roles'][:2]
+
+            cp_dict = {
+                'member_json': json.dumps(member),
+                'member_hash': "ABC",  # TODO
+                'last_name': HTMLParser().unescape(member['last_name']),
+                'first_name': HTMLParser().unescape(member['first_name']),
+                'congress': member['roles'][0]['congress'],
+                'chamber': member['roles'][0]['chamber'],
+                'state': member['roles'][0]['state'],
+                'district': member['roles'][0]['district'],
+            }
+
+            cp = cls(**cp_dict)
+            db.session.add(cp)
+            db.session.commit()
         # else if last_update > 1 day ago...
         return cp
-
-    def __init__(self, id):
-        self.id = id
-        self.__member = self.pp.get_member_by_id(id)
-        if len(self.__member['roles']) > 2:
-            self.__member['roles'] = self.__member['roles'][:2]
-        self.member_json = json.dumps(self.__member)
-        self.member_hash = "ABC"  # TODO
-        self.last_name = HTMLParser().unescape(self.member['last_name'])
-        self.first_name = HTMLParser().unescape(self.member['first_name'])
-        self.congress = self.member['roles'][0]['congress']
-        self.chamber = self.member['roles'][0]['chamber']
-        self.state = self.member['roles'][0]['state']
-        self.district = self.member['roles'][0]['district']
-        member_info = self.gpo.get_member_info(self.get_last_name(),
-                                               self.get_first_name())
-        self.image = member_info.get("ImageUrl", None) if member_info else None
 
     @property
     def member(self):
@@ -101,7 +93,7 @@ class Congressperson(Base):
                                                    self.get_first_name())
             self.image = member_info.get("ImageUrl", None) if member_info else None
             if self.image is not None:
-                db_session.commit()
+                db.session.commit()
         return self.image
 
     def get_party(self):
@@ -180,7 +172,8 @@ class Congressperson(Base):
         feed = feedparser.parse(self.member['rss_url'])
         ret = feed['items'][:last_n] if feed['items'] and last_n > 0 else []
         for r in ret:
-            if r['published_parsed'] is not None:  # e.g. https://amodei.house.gov/rss/news-releases.xml
+            # e.g. https://amodei.house.gov/rss/news-releases.xml
+            if r['published_parsed'] is not None:
                 r['date'] = datetime.datetime(*r['published_parsed'][:6]).strftime(
                     '%m-%d-%Y')
         return ret

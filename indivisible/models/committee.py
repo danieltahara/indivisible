@@ -5,10 +5,10 @@ from sqlalchemy import func
 from sqlalchemy import Integer
 from sqlalchemy import String
 
-from database import Base
-from database import db_session
+from database import db
 
-class Committee(Base):
+
+class Committee(db.Model):
     __tablename__ = 'committee'
     # pkey = code, congress
     code = Column(String(10), primary_key=True)
@@ -31,24 +31,23 @@ class Committee(Base):
 
     @classmethod
     def get_or_create(cls, congress, chamber, code):
-        c = cls.query.filter(cls.congress == congress).filter(cls.code == code).first()
+        c = cls.query.filter_by(congress=congress).filter_by(code=code).first()
         if c is None:
             pp_c = cls.pp.get_committee(congress, chamber, code)
             if pp_c is None:
                 return None  # e.g. SCNC
-            c = cls(congress, chamber, code, pp_c)
-            db_session.add(c)
-            db_session.commit()
+            c_dict = {
+                'code': code,
+                'congress': congress,
+                'chamber': chamber,
+                'name': pp_c['committee'],
+                'committee_json': json.dumps(pp_c),
+                'committee_hash': "ABC",  # TODO
+            }
+            c = cls(**c_dict)
+            db.session.add(c)
+            db.session.commit()
         return c
-
-    def __init__(self, congress, chamber, code, committee):
-        self.code = code
-        self.congress = congress
-        self.chamber = chamber
-        self.__committee = committee
-        self.name = self.committee['committee']
-        self.committee_json = json.dumps(self.committee)
-        self.committee_hash = "ABC"  # TODO
 
     @property
     def committee(self):

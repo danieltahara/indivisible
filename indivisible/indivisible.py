@@ -1,11 +1,9 @@
-from flask import (
-    Flask,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import Flask
+from flask import jsonify
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
 from flask_bootstrap import Bootstrap
 import json
 import os
@@ -25,40 +23,13 @@ from datasources.senategov import SenateGov
 from models.committee import Committee
 from models.congress import Congress
 from models.congressperson import Congressperson
-from models.database import db_session
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 Bootstrap(app)
 
-ProPublica.initialize(os.environ['PROPUBLICA_API_KEY'])
-EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
-
-pp = ProPublica()
-er = EventRegistry2()
-gpo = GovernmentPublishingOffice(114)
-cog = CongressGov()
-dhg = DocsHouseGov()
-sg = SenateGov()
-pf = Politifact()
-
-Committee.initialize_datasources(pp)
-Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
-Congressperson.initialize_datasources(pp, er, gpo, pf, None)
-cg = Congress.get_or_create(115)
-cg.prefetch()
-Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
-
-
-# Create a TwilioCapability object with our Twilio API credentials
-capability = None
-twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER', None)
-if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
-    # Allow our users to make outgoing calls with Twilio Client
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    auth_token = os.environ['TWILIO_AUTH_TOKEN']
-    capability = TwilioCapability(account_sid, auth_token)
-    capability.allow_client_outgoing(os.environ['TWIML_APP_SID'])
-
+cg = None # Congress object
+capability = None # Twilio capability
 
 @app.route('/')
 def main():
@@ -178,7 +149,7 @@ def get_politifact(last_name, first_name):
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    db.session.remove()
 
 
 @app.context_processor
@@ -191,6 +162,38 @@ def add_utilities():
     )
 
 if __name__ == "__main__":
+    from models.database import db
+    db.init_app(app)
+    app.app_context().push()
+    #db.create_all(app)
+
+    ProPublica.initialize(os.environ['PROPUBLICA_API_KEY'])
+    EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
+
+    pp = ProPublica()
+    er = EventRegistry2()
+    gpo = GovernmentPublishingOffice(114)
+    cog = CongressGov()
+    dhg = DocsHouseGov()
+    sg = SenateGov()
+    pf = Politifact()
+
+    Committee.initialize_datasources(pp)
+    Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
+    Congressperson.initialize_datasources(pp, er, gpo, pf, None)
+    cg = Congress.get_or_create(115)
+    cg.prefetch()
+    Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
+
+    # Create a TwilioCapability object with our Twilio API credentials
+    twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER', None)
+    if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
+        # Allow our users to make outgoing calls with Twilio Client
+        account_sid = os.environ['TWILIO_ACCOUNT_SID']
+        auth_token = os.environ['TWILIO_AUTH_TOKEN']
+        capability = TwilioCapability(account_sid, auth_token)
+        capability.allow_client_outgoing(os.environ['TWIML_APP_SID'])
+
     host = '0.0.0.0'
     if os.environ.get('FLASK_DEBUG', '0') == '1':
         host = '127.0.0.1'

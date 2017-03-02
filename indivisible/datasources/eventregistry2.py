@@ -1,8 +1,6 @@
-from eventregistry import (
-    EventRegistry,
-    QueryEvents,
-    RequestEventsInfo,
-)
+from eventregistry import EventRegistry
+from eventregistry import QueryEvents
+from eventregistry import RequestEventsInfo
 
 
 class EventRegistry2(EventRegistry):

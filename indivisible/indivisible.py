@@ -5,8 +5,9 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from flask_bootstrap import Bootstrap
-import json
+from flask_migrate import Migrate
 import os
+import json
 import re
 from twilio.util import TwilioCapability
 from twilio import twiml
@@ -147,9 +148,9 @@ def get_politifact(last_name, first_name):
     return redirect(url, 302)
 
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db.session.remove()
+#@app.teardown_appcontext
+#def shutdown_session(exception=None):
+#    db.session.remove()
 
 
 @app.context_processor

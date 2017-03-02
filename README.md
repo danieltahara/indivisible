@@ -61,9 +61,9 @@ DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible?charset=utf8"
 
 * Initialize DB:
 ~~~
-env $(cat indivisible.cfg | xargs) python
-from indivisible.models.database import init_db
-init_db()
+pushd indivisible
+env $(cat ../indivisible.cfg | xargs) python manager.py db upgrade
+popd
 ~~~
 
 ## How to run:

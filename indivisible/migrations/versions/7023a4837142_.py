@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cp_id', sa.String(length=10), nullable=False),
     sa.Column('city', sa.String(length=100), nullable=False),
-    sa.Column('info_json', sa.String(length=1000), nullable=True),
+    sa.Column('info_json', sa.String(length=2048), nullable=True),
     sa.ForeignKeyConstraint(['cp_id'], ['congressperson.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('cp_id', 'city')

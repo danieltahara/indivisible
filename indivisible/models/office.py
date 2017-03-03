@@ -12,7 +12,7 @@ class Office(db.Model):
     cp_id = db.Column(db.String(10), db.ForeignKey('congressperson.id'), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(10), nullable=True)
-    info_json =  db.Column(db.String(1000), nullable=True)
+    info_json =  db.Column(db.String(2048), nullable=True)
     __table_args__ = (db.UniqueConstraint("cp_id", "city"),)
 
 

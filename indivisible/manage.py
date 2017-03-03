@@ -2,7 +2,6 @@ from flask_migrate import Migrate
 from flask_migrate import MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
-import os
 
 from indivisible import app
 from models.database import db

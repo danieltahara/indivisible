@@ -44,14 +44,14 @@ class Congress(db.Model):
             cg = cls(congress=congress)
             db.session.add(cg)
             db.session.commit()
-            cg.refresh()
         elif cg.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+            print "Updating {}th congress".format(congress)
+            cg.last_updated = datetime.datetime.now()
+            db.session.commit()
+        try:
+            cg.members
+        except AttributeError:
             cg.refresh()
-        else:
-            try:
-                cg.members
-            except AttributeError:
-                cg.refresh()
         return cg
 
     def refresh(self):

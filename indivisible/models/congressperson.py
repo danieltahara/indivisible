@@ -72,8 +72,9 @@ class Congressperson(db.Model):
             cp_dict = cls.get_cp_dict(id)
             if cp_dict['member_hash'] != cp.member_hash:
                 print "Refreshing congressperson info for {}".format(cp_dict['id'])
-                cp = cls.query.filter_by(id=id).update(cp_dict)
+                cls.query.filter_by(id=id).update(cp_dict)
                 db.session.commit()
+                return cls.get_or_create(id)
         return cp
 
     @property

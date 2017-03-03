@@ -54,8 +54,9 @@ class Committee(db.Model):
             c_dict = cls.get_c_dict(congress, chamber, code)
             if c_dict['committee_hash'] != c.committee_hash:
                 print "Refreshing committee info for {}".format(c_dict['code'])
-                c = cls.query.filter_by(congress=congress).filter_by(code=code).update(c_dict)
+                cls.query.filter_by(congress=congress).filter_by(code=code).update(c_dict)
                 db.session.commit()
+                return cls.get_or_create(congress, chamber, code)
         return c
 
     @property

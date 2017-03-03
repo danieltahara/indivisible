@@ -9,6 +9,7 @@ from database import db
 from office import Office
 
 
+# TODO: rollback on error
 class Congressperson(db.Model):
     __tablename__ = 'congressperson'
     id = db.Column(db.String(10), primary_key=True)

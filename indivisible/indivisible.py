@@ -32,6 +32,7 @@ Bootstrap(app)
 
 cg = None # Congress object
 capability = None # Twilio capability
+twilio_phone_number = None
 
 @app.route('/')
 def main():
@@ -173,6 +174,7 @@ def initialize_app(app):
     Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
 
     # Create a TwilioCapability object with our Twilio API credentials
+    global twilio_phone_number
     twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER', None)
     if os.environ.get('TWILIO_AUTH_TOKEN', None) is not None:
         # Allow our users to make outgoing calls with Twilio Client

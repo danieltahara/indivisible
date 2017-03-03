@@ -149,11 +149,6 @@ def get_politifact(last_name, first_name):
     return redirect(url, 302)
 
 
-#@app.teardown_appcontext
-#def shutdown_session(exception=None):
-#    db.session.remove()
-
-
 @app.context_processor
 def add_utilities():
     def json_pretty(arg):
@@ -163,11 +158,10 @@ def add_utilities():
         url_for=url_for,
     )
 
-if __name__ == "__main__":
+def initialize_app(app):
     from models.database import db
     db.init_app(app)
     app.app_context().push()
-    #db.create_all(app)
 
     ProPublica.initialize(os.environ['PROPUBLICA_API_KEY'])
     EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
@@ -183,6 +177,7 @@ if __name__ == "__main__":
     Committee.initialize_datasources(pp)
     Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
     Congressperson.initialize_datasources(pp, er, gpo, pf, None)
+    global cg
     cg = Congress.get_or_create(115)
     cg.prefetch()
     Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
@@ -193,8 +188,13 @@ if __name__ == "__main__":
         # Allow our users to make outgoing calls with Twilio Client
         account_sid = os.environ['TWILIO_ACCOUNT_SID']
         auth_token = os.environ['TWILIO_AUTH_TOKEN']
+        global capability
         capability = TwilioCapability(account_sid, auth_token)
         capability.allow_client_outgoing(os.environ['TWIML_APP_SID'])
+
+
+if __name__ == "__main__":
+    initialize_app(app)
 
     host = '0.0.0.0'
     if os.environ.get('FLASK_DEBUG', '0') == '1':

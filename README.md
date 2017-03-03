@@ -133,6 +133,8 @@ sys.path.insert(0,"/var/www/indivisible/")
 os.environ['PROPUBLICA_API_KEY'] = "XXXX"
 
 from indivisible import app as application
+from indivisible import initialize_app
+initialize_app(application)
 ~~~
 * Enable Virtual Host:
 ~~~

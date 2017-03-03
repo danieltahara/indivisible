@@ -83,8 +83,8 @@ def call():
     response = twiml.Response()
 
     with response.dial(callerId=twilio_phone_number) as dial:
-        phone_number = request.form.get('phone_number', None)
-        office_id = request.form.get('office_id', None)
+        phone_number = request.form.get('phoneNumber', None)
+        office_id = request.form.get('officeId', None)
         if not phone_number or not office_id:
             response = jsonify({"error": "Missing params (phone #, office #)"})
             response.status_code = 500
@@ -96,11 +96,13 @@ def call():
             response.status_code = 500
             return response
 
-        print office.id
-        print office.phone
-        # TODO: prepend +1, # cast phone to str
+        if str(phone_number) != office.phone:
+            response = jsonify({"error": "Phone number failed validation"})
+            response.status_code = 500
+            return response
 
-        dial.number("+16463976379")
+        phone = "+1{}".format(office.phone)
+        dial.number(phone)
 
     return str(response)
 

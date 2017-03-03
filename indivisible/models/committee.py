@@ -45,8 +45,10 @@ class Committee(db.Model):
 
     @classmethod
     def get_or_create(cls, congress, chamber, code):
-        c = cls.query.filter_by(congress=congress).filter_by(code=code).first()
+        results = cls.query.filter_by(congress=congress).filter_by(code=code)
+        c = results.first()
         if c is None:
+            c_dict = cls.get_c_dict(congress, chamber, code)
             c = cls(**c_dict)
             db.session.add(c)
             db.session.commit()
@@ -54,9 +56,12 @@ class Committee(db.Model):
             c_dict = cls.get_c_dict(congress, chamber, code)
             if c_dict['committee_hash'] != c.committee_hash:
                 print "Refreshing committee info for {}".format(c_dict['code'])
-                cls.query.filter_by(congress=congress).filter_by(code=code).update(c_dict)
+                results.update(c_dict)
                 db.session.commit()
                 return cls.get_or_create(congress, chamber, code)
+            else:
+                c.last_updated = datetime.datetime.now()
+                db.session.commit()
         return c
 
     @property

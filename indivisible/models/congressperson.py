@@ -62,7 +62,8 @@ class Congressperson(db.Model):
 
     @classmethod
     def get_or_create(cls, id):
-        cp = cls.query.filter_by(id=id).first()
+        results = cls.query.filter_by(id=id)
+        cp = results.first()
         if not cp:
             cp_dict = cls.get_cp_dict(id)
             cp = cls(**cp_dict)
@@ -72,9 +73,12 @@ class Congressperson(db.Model):
             cp_dict = cls.get_cp_dict(id)
             if cp_dict['member_hash'] != cp.member_hash:
                 print "Refreshing congressperson info for {}".format(cp_dict['id'])
-                cls.query.filter_by(id=id).update(cp_dict)
+                results.update(cp_dict)
                 db.session.commit()
                 return cls.get_or_create(id)
+            else:
+                cp.last_updated = datetime.datetime.now()
+                db.session.commit()
         return cp
 
     @property

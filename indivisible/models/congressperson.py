@@ -42,19 +42,20 @@ class Congressperson(db.Model):
     def get_or_create(cls, id):
         cp = cls.query.filter_by(id=id).first()
         if not cp:
-            member = cl.pp.get_member_by_id(id)
+            member = cls.pp.get_member_by_id(id)
             if len(member['roles']) > 2:
                 member['roles'] = member['roles'][:2]
 
             cp_dict = {
-                'member_json': json.dumps(member),
-                'member_hash': "ABC",  # TODO
+                'id': member['member_id'],
                 'last_name': HTMLParser().unescape(member['last_name']),
                 'first_name': HTMLParser().unescape(member['first_name']),
                 'congress': member['roles'][0]['congress'],
                 'chamber': member['roles'][0]['chamber'],
                 'state': member['roles'][0]['state'],
                 'district': member['roles'][0]['district'],
+                'member_json': json.dumps(member),
+                'member_hash': "ABC",  # TODO
             }
 
             cp = cls(**cp_dict)
@@ -195,3 +196,7 @@ class Congressperson(db.Model):
             for event in events:
                 result.append((event['date'], event))
         return sorted(result, key=lambda ev: ev[0])
+
+
+def json_pretty(j):
+    print json.dumps(j, sort_keys=True, indent=4, separators=(',', ': '))

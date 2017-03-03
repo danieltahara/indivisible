@@ -24,6 +24,7 @@ from datasources.senategov import SenateGov
 from models.committee import Committee
 from models.congress import Congress
 from models.congressperson import Congressperson
+from models.office import Office
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']

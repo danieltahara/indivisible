@@ -1,3 +1,4 @@
+alembic==0.9.1
 appdirs==1.4.0
 beautifulsoup4==4.5.3
 bs4==0.0.1
@@ -7,15 +8,19 @@ eventregistry==6.1.6
 feedparser==5.2.1
 Flask==0.12
 Flask-Bootstrap==3.3.7.1
+Flask-Migrate==2.0.3
+Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 httplib2==0.10.3
 itsdangerous==0.24
 jellyfish==0.5.1
 Jinja2==2.9.5
+Mako==1.0.6
 MarkupSafe==0.23
 packaging==16.8
 PyMySQL==0.7.10
 pyparsing==2.1.10
+python-editor==1.0.3
 pytz==2016.10
 requests==2.13.0
 six==1.10.0

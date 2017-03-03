@@ -6,6 +6,7 @@ from six.moves.html_parser import HTMLParser
 
 from committee import Committee
 from database import db
+from office import Office
 
 
 class Congressperson(db.Model):
@@ -151,8 +152,25 @@ class Congressperson(db.Model):
         return [c for c in committees if c is not None]
 
     def get_offices(self):
-        return self.gpo.get_offices(self.get_last_name(),
-                                    self.get_first_name())
+        # TODO: Periodic refresh of these too
+        offices = Office.query.filter_by(cp_id=self.id).all()
+        if len(offices) == 0:
+            offices = []
+            gpo_offices = self.gpo.get_offices(self.get_last_name(),
+                                               self.get_first_name())
+            for gpo_office in gpo_offices:
+                office_dict = {
+                    'cp_id': self.id,
+                    'city': gpo_office['City'],
+                    'phone': gpo_office.get('Phone', None),
+                    'info_json': json.dumps(gpo_office),
+                }
+                office = Office(**office_dict)
+                offices.append(office)
+                db.session.add(office)
+            db.session.commit()
+        return offices
+
 
     def get_votes(self, last_n=0):
         """

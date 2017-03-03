@@ -46,10 +46,10 @@ Twilio.Device.disconnect(function(connection) {
 });
 
 /* Call a customer from a support ticket */
-function callCongressperson(phoneNumber) {
+function callCongressperson(phoneNumber, office_id) {
     updateCallStatus("Calling " + phoneNumber + "...");
 
-    var params = {"phoneNumber": phoneNumber};
+    var params = {"phone_number": phoneNumber, "office_id": office_id};
     Twilio.Device.connect(params);
 }
 

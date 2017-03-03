@@ -82,35 +82,26 @@ def call():
     response = twiml.Response()
 
     with response.dial(callerId=twilio_phone_number) as dial:
-        dial.number("+16463976379")
-
-    return str(response)
-
-
-@app.route('/members/call_new', methods=['POST'])
-def call_new():
-    """Returns TwiML instructions to Twilio's POST requests"""
-    response = twiml.Response()
-
-    with response.dial(callerId=twilio_phone_number) as dial:
-        member_id = request.form.get('member_id', None)
-        if not member_id:
-            response = jsonify({"error": "Missing member id"})
+        phone_number = request.form.get('phone_number', None)
+        office_id = request.form.get('office_id', None)
+        if not phone_number or not office_id:
+            response = jsonify({"error": "Missing params (phone #, office #)"})
             response.status_code = 500
             return response
 
-        cp = Congressperson.get_or_create(member_id)
+        office = Office.query.filter_by(id=office_id).first()
+        if not office or office.phone != phone_number:
+            response = jsonify({"error": "Invalid office"})
+            response.status_code = 500
+            return response
 
-        office_id = request.form.get('office_id', 0)
-        offices = cp.get_offices()
-        if office_id >= len(offices) or office_id < 0:
-            office_id = 0
-        phone = offices[office_id]['Phone']
+        print office.id
+        print office.phone
+        # TODO: prepend +1, # cast phone to str
 
-        dial.number(phone)
+        dial.number("+16463976379")
 
     return str(response)
-
 
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
 def get_votes(congress, chamber, session, roll_call):

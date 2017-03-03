@@ -16,14 +16,6 @@ class Office(db.Model):
     __table_args__ = (db.UniqueConstraint("cp_id", "city"),)
 
 
-    @classmethod
-    def get_or_create(cls, cp_id, city):
-        office = cls.query.filter_by(cp_id=cp_id).filter_by(city=city).first()
-        if not office:
-            office = cls(cp_id=cp_id, city=city)
-            db.session.add(office)
-            db.session.commmit()
-
     @property
     def info(self):
         try:

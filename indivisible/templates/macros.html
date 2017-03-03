@@ -94,18 +94,18 @@
 
 {% macro render_office_info(office) -%}
 <tr>
-  <td><em>{{office["City"]}}</em></td>
+  <td><em>{{office.city}}</em></td>
   <td>
-    <button onclick="callCongressperson({{office['Phone']}})" type="button" class="btn btn-primary btn-lg call-congressperson-button">
+    <button onclick="callCongressperson({{office.phone}}, {{office.id}})" type="button" class="btn btn-primary btn-lg call-congressperson-button">
     <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-      {{ office["Phone"] }}
+    {{ office.phone }}
     </button>
   </td>
   <td>
     <div class="row">
       <div class="col-md-12">
-        {% if office["StaffList"] is iterable -%}
-        {% for s in office["StaffList"] -%}
+        {% if office.info["StaffList"] is iterable -%}
+        {% for s in office.info["StaffList"] -%}
         <div class="row">
           <div class="col-md-12"><em>{{ s["OfficeStaffTypeDescription"] }}</em>: {{ s["FirstName"] }} {{s["LastName"]}}</div>
         </div>

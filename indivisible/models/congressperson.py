@@ -1,7 +1,8 @@
-from six.moves.html_parser import HTMLParser
 import datetime
 import feedparser
+import hashlib
 import json
+from six.moves.html_parser import HTMLParser
 
 from committee import Committee
 from database import db
@@ -18,7 +19,7 @@ class Congressperson(db.Model):
     district = db.Column(db.String(4))
     image = db.Column(db.String(200))
     member_json = db.Column(db.String(8192), nullable=False)
-    member_hash = db.Column(db.String(32), nullable=False) # TODO
+    member_hash = db.Column(db.String(32), nullable=False)
     last_updated = db.Column(db.DateTime, nullable=False,
                              server_default=db.func.now(),
                              server_onupdate=db.func.now())
@@ -39,29 +40,40 @@ class Congressperson(db.Model):
         cls.cg = cg  # TODO: get rid of this dep
 
     @classmethod
+    def get_cp_dict(cls, id):
+        member = cls.pp.get_member_by_id(id)
+        if len(member['roles']) > 2:
+            member['roles'] = member['roles'][:2]
+
+        cp_dict = {
+            'id': member['member_id'],
+            'last_name': HTMLParser().unescape(member['last_name']),
+            'first_name': HTMLParser().unescape(member['first_name']),
+            'congress': member['roles'][0]['congress'],
+            'chamber': member['roles'][0]['chamber'],
+            'state': member['roles'][0]['state'],
+            'district': member['roles'][0]['district'],
+            'member_json': json.dumps(member),
+        }
+        md5 = hashlib.md5()
+        md5.update(cp_dict['member_json'])
+        cp_dict['member_hash'] = md5.hexdigest()
+        return cp_dict
+
+    @classmethod
     def get_or_create(cls, id):
         cp = cls.query.filter_by(id=id).first()
         if not cp:
-            member = cls.pp.get_member_by_id(id)
-            if len(member['roles']) > 2:
-                member['roles'] = member['roles'][:2]
-
-            cp_dict = {
-                'id': member['member_id'],
-                'last_name': HTMLParser().unescape(member['last_name']),
-                'first_name': HTMLParser().unescape(member['first_name']),
-                'congress': member['roles'][0]['congress'],
-                'chamber': member['roles'][0]['chamber'],
-                'state': member['roles'][0]['state'],
-                'district': member['roles'][0]['district'],
-                'member_json': json.dumps(member),
-                'member_hash': "ABC",  # TODO
-            }
-
+            cp_dict = cls.get_cp_dict(id)
             cp = cls(**cp_dict)
             db.session.add(cp)
             db.session.commit()
-        # else if last_update > 1 day ago...
+        elif cp.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+            cp_dict = cls.get_cp_dict(id)
+            if cp_dict['member_hash'] != cp.member_hash:
+                print "Refreshing congressperson info for {}".format(cp_dict['id'])
+                cp = cls.query.filter_by(id=id).update(cp_dict)
+                db.session.commit()
         return cp
 
     @property
@@ -75,6 +87,10 @@ class Congressperson(db.Model):
     @member.setter
     def member(self, member):
         self.__member = member
+        self.member_json = json.dumps(self.__member)
+        md5 = hashlib.md5()
+        md5.update(self.member_json)
+        self.member_hash = md5.hexdigest()
 
     def get_id(self):
         return self.id

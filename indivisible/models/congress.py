@@ -9,7 +9,6 @@ from congressperson import Congressperson
 from database import db
 
 
-# TODO: periodic refresh
 class Congress(db.Model):
     __tablename__ = 'congress'
     congress = db.Column(db.Integer, primary_key=True)
@@ -45,10 +44,17 @@ class Congress(db.Model):
             cg = cls(congress=congress)
             db.session.add(cg)
             db.session.commit()
-            cg.prefetch()
+            cg.refresh()
+        elif cg.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+            cg.refresh()
+        else:
+            try:
+                cg.members
+            except AttributeError:
+                cg.refresh()
         return cg
 
-    def prefetch(self):
+    def refresh(self):
         self.members = {}
         self.committees = {}
         self.events = {}

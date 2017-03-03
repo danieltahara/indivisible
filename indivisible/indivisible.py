@@ -179,7 +179,6 @@ def initialize_app(app):
     Congressperson.initialize_datasources(pp, er, gpo, pf, None)
     global cg
     cg = Congress.get_or_create(115)
-    cg.prefetch()
     Congressperson.initialize_datasources(pp, er, gpo, pf, cg)
 
     # Create a TwilioCapability object with our Twilio API credentials

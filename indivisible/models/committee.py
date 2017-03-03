@@ -1,9 +1,6 @@
+import datetime
+import hashlib
 import json
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import func
-from sqlalchemy import Integer
-from sqlalchemy import String
 
 from database import db
 
@@ -11,15 +8,15 @@ from database import db
 class Committee(db.Model):
     __tablename__ = 'committee'
     # pkey = code, congress
-    code = Column(String(10), primary_key=True)
-    congress = Column(Integer, nullable=False)
-    chamber = Column(String(10), nullable=False)
-    name = Column(String(100), nullable=False)
-    committee_json = Column(String(1024), nullable=False)
-    committee_hash = Column(String(32), nullable=False)
-    last_updated = Column(DateTime, nullable=False,
-                          server_default=func.now(),
-                          server_onupdate=func.now())
+    code = db.Column(db.String(10), primary_key=True)
+    congress = db.Column(db.Integer, nullable=False)
+    chamber = db.Column(db.String(10), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    committee_json = db.Column(db.String(1024), nullable=False)
+    committee_hash = db.Column(db.String(32), nullable=False)
+    last_updated = db.Column(db.DateTime, nullable=False,
+                          server_default=db.func.now(),
+                          server_onupdate=db.func.now())
 
     @classmethod
     def initialize_datasources(cls, pp):
@@ -30,23 +27,35 @@ class Committee(db.Model):
         cls.pp = pp
 
     @classmethod
+    def get_c_dict(cls, congress, chamber, code):
+        pp_c = cls.pp.get_committee(congress, chamber, code)
+        if pp_c is None:
+            return None  # e.g. SCNC
+        c_dict = {
+            'code': code,
+            'congress': congress,
+            'chamber': chamber,
+            'name': pp_c['committee'],
+            'committee_json': json.dumps(pp_c),
+        }
+        md5 = hashlib.md5()
+        md5.update(c_dict['committee_json'])
+        c_dict['committee_hash'] = md5.hexdigest()
+        return c_dict
+
+    @classmethod
     def get_or_create(cls, congress, chamber, code):
         c = cls.query.filter_by(congress=congress).filter_by(code=code).first()
         if c is None:
-            pp_c = cls.pp.get_committee(congress, chamber, code)
-            if pp_c is None:
-                return None  # e.g. SCNC
-            c_dict = {
-                'code': code,
-                'congress': congress,
-                'chamber': chamber,
-                'name': pp_c['committee'],
-                'committee_json': json.dumps(pp_c),
-                'committee_hash': "ABC",  # TODO
-            }
             c = cls(**c_dict)
             db.session.add(c)
             db.session.commit()
+        elif c.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+            c_dict = cls.get_c_dict(congress, chamber, code)
+            if c_dict['committee_hash'] != c.committee_hash:
+                print "Refreshing committee info for {}".format(c_dict['code'])
+                c = cls.query.filter_by(congress=congress).filter_by(code=code).update(c_dict)
+                db.session.commit()
         return c
 
     @property
@@ -60,3 +69,7 @@ class Committee(db.Model):
     @committee.setter
     def committee(self, committee):
         self.__committee = committee
+        self.committee_json = json.dumps(self.__committee)
+        md5 = hashlib.md5()
+        md5.update(self.committee_json)
+        self.committee_hash = md5.hexdigest()

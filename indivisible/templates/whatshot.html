@@ -4,9 +4,10 @@
 {% block content %}
 {{ super() }}
 <div class="container" id="hot-bills">
-  <div class="row"><div class="col-md-12"><h4>Popular Bills:</h4></div></div>
+  <div class="row"><div class="col-md-12"><h2>What's Hot</h2></div></div>
   <table class="table table-striped">
     <thead>
+      <h3>Popular Bills</h3>
     </thead>
     <tbody>
       {% for bill in hot_bills %}

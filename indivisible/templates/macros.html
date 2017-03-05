@@ -54,6 +54,12 @@
     </div>
   </div>
   <div class="row">
+    <div class="col-md-3">Voting Record</div>
+    <div class="col-md-9"><a href={{url_for('get_on_the_issues', id=member.id)}}>
+        See {{member.get_last_name()}} on the issues</a>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-md-3">Party-Line Votes</div>
     <div class="col-md-9">{{member.get_party_line_votes()}}%</div>
   </div>

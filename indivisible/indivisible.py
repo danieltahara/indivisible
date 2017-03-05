@@ -46,6 +46,11 @@ def get_whats_hot():
     return render_template("whatshot.html", hot_bills=bills)
 
 
+@app.route('/data')
+def get_data():
+    return render_template("data.html")
+
+
 @app.route('/members')
 def get_members():
     return render_template("members.html", cg=cg, all_states=us.states.STATES)
@@ -59,13 +64,6 @@ def search_members():
     district = request.args.get('district', None)
     members = cg.search_members(name=name, chamber=chamber, state=state, district=district)
     return render_template('members_search.html', members=members)
-
-
-@app.route('/members/<id>')
-def get_member(id):
-    cp = Congressperson.get_or_create(id)
-    return render_template('member.html', member=cp)
-
 
 @app.route('/members/token', methods=['GET'])
 def get_token():
@@ -107,6 +105,38 @@ def call():
 
     return str(response)
 
+
+@app.route('/members/<id>')
+def get_member(id):
+    cp = Congressperson.get_or_create(id)
+    return render_template('member.html', member=cp)
+
+
+@app.route('/members/<id>/politifact')
+def get_politifact(last_name, first_name):
+    cp = Congressperson.get_or_create(id)
+    if cp is None:
+        response = jsonify({"error": "Missing capability"})
+        response.status_code = 500
+        return response
+    url = "http://www.politifact.com/personalities/{first_name}-{last_name}/" \
+        "statements".format(last_name=cp.get_last_name().lower(),
+                            first_name=cp.get_first_name().lower())
+    return redirect(url, 302)
+
+
+@app.route('/members/<id>/on_the_issues')
+def get_on_the_issues(id):
+    cp = Congressperson.get_or_create(id)
+    if cp is None:
+        response = jsonify({"error": "Missing capability"})
+        response.status_code = 500
+        return response
+    url = "http://www.ontheissues.org/{state}/{first_name}_{last_name}.htm" \
+        .format(state=cp.get_state(), last_name=cp.get_last_name(), first_name=cp.get_first_name())
+    return redirect(url, 302)
+
+
 @app.route('/votes/<congress>/<chamber>/<session>/<roll_call>')
 def get_votes(congress, chamber, session, roll_call):
     url = "https://projects.propublica.org/represent/votes/{congress}/" \
@@ -133,14 +163,6 @@ def get_bill(congress, number):
 def get_news(uri):
     url = "http://eventregistry.org/event/{uri}?displayLang=eng&tab=articles" \
         .format(uri=uri)
-    return redirect(url, 302)
-
-
-@app.route('/politifact/<first_name>/<last_name>')
-def get_politifact(last_name, first_name):
-    url = "http://www.politifact.com/personalities/{first_name}-{last_name}/" \
-        "statements".format(last_name=last_name.lower(),
-                            first_name=first_name.lower())
     return redirect(url, 302)
 
 

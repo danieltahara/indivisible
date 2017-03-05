@@ -68,9 +68,7 @@
           </table>
           <div class="row"><div class="col-md-12">
               <a class="btn btn-primary pull-right" role="button" style="color: gold;"
-                href={{url_for('get_politifact', last_name=member.get_last_name(),
-                first_name=member.get_first_name())}}>
-                More at Politifact</a>
+                href={{url_for('get_politifact', id=member.id)}}>More at Politifact</a>
             </div></div>
         </div>
 

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+<div class="container" id="data-sources">
+  <div class="row"><div class="col-md-12"><h2>About the Data</h2></div></div>
+  <table class="table table-striped">
+    <thead>
+      <h3>Sites we used</h3>
+      <p>Our data comes from a number of different sources. Many of these sources offered free APIs
+        (which make data extraction and re-use easy), and others, while free, don't offer a good
+        method of aggregation. We tried to take the pain out of keeping track of all these data
+        sources, but for those who are interested, here they are.
+      </p>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://propublica.github.io/congress-api-docs/">ProPublica OpenCongress API</a></td>
+        <td>ProPublica offers <a href="https://www.propublica.org/datastore/apis">a number of free
+            data sources</a> as part of their mission. The Congress API serves as the base of this
+          site, providing biographical info, voting records, bill sponsorships, public statements,
+          and committee membership.</td>
+      </tr>
+        <td><a href="https://www.govtrack.us">GovTrack</a></td>
+        <td>The site I would use if this one didn't exist. GovTrack presents bills and vote
+          information in an easily navigable and searchable format. It is effectively a wrapper around
+          <a href="https://congress.gov">Congress.gov</a>.</td>
+      </tr>
+      <tr>
+        <td><a href="http://ontheissues.org">On the Issues</a></td>
+        <td>Provides analyses of each politician on major issues, using their past statements and
+          voting records as a guide.</td>
+      </tr>
+      <tr>
+        <td><a href="http://memberguide.gpo.gov/">The Government Publishing Office</a></td>
+        <td>The GPO produces a member guide that includes office and staff information for members
+          of Congress. They haven't added the 115th Congress yet, but I will update the site when
+          they do.
+        </td>
+      </tr>
+      <tr>
+        <td><a href="https://senate.gov">Senate.gov</a></td>
+        <td>Contains the Senate calendar (including committee schedules), as well as information on
+          active legislation (mostly links to Congress.gov) and some historical info.</td>
+      </tr>
+      <tr>
+        <td><a href="http://docs.house.gov/">House.gov</a></td>
+        <td>Contains the House calendar and information on upcoming legislation.</td>
+      </tr>
+      <tr>
+        <td><a href="https://eventregistry.org/">Event Registry</a></td>
+        <td>A free news aggregation site that groups news articles by entities (e.g. people, events,
+          etc), forming a stream of 'news events' for each entity</td>
+      </tr>
+      <tr>
+        <td><a href="http://politifact.com">Politifact</a></td>
+        <td>A website that does fact checking of statements made by and about politicians.</td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-striped">
+    <thead>
+      <h3>Sites we recommend</h3>
+      <p>These are sites whose data, for one reason or another, I wasn't able to use. Typically this
+        had to do with access costs, but sometimes it had to do with not being able to easily
+        generate links to the relevant pages.</p>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://www.votesmart.org/">Vote Smart</a></td>
+        <td>Similarly to On the Issues, Vote Smart attempts to infer policy positions for
+          politicians based on votes and statements. I particularly like their "ratings" tabs, which
+          lists endorsements from organizations. Those endorsements typically contain further fact
+          sheets which break down the reason for the rating or endorsement, which can be
+          enlightening.
+        </td>
+      </tr>
+      <tr>
+        <td><a href="https://www.opensecrets.org/">Open Secrets</a></td>
+        <td>Provides donor information for politicians.</td>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

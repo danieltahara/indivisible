@@ -49,10 +49,12 @@ class Committee(db.Model):
         c = results.first()
         if c is None:
             c_dict = cls.get_c_dict(congress, chamber, code)
+            if c_dict is None: # FIXME
+                return None
             c = cls(**c_dict)
             db.session.add(c)
             db.session.commit()
-        elif c.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+        elif c.last_updated + datetime.timedelta(days=7) < datetime.datetime.today():
             c_dict = cls.get_c_dict(congress, chamber, code)
             if c_dict['committee_hash'] != c.committee_hash:
                 print "Refreshing committee info for {}".format(c_dict['code'])

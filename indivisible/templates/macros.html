@@ -53,6 +53,14 @@
       {%- endfor %}
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-3">Party-Line Votes</div>
+    <div class="col-md-9">{{member.get_party_line_votes()}}%</div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">Missed Votes</div>
+    <div class="col-md-9">{{member.get_missed_votes()}}%</div>
+  </div>
 </div>
 {%- endmacro %}
 

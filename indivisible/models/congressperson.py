@@ -71,7 +71,7 @@ class Congressperson(db.Model):
             cp = cls(**cp_dict)
             db.session.add(cp)
             db.session.commit()
-        elif cp.last_updated + datetime.timedelta(days=1) < datetime.datetime.today():
+        elif cp.last_updated + datetime.timedelta(days=7) < datetime.datetime.today():
             cp_dict = cls.get_cp_dict(id)
             if cp_dict['member_hash'] != cp.member_hash:
                 print "Refreshing congressperson info for {}".format(cp_dict['id'])
@@ -122,6 +122,12 @@ class Congressperson(db.Model):
 
     def get_party(self):
         return self.member['current_party']
+
+    def get_missed_votes(self):
+        return self.member['roles'][0]['missed_votes_pct']
+
+    def get_party_line_votes(self):
+        return self.member['roles'][0]['votes_with_party_pct']
 
     def get_twitter_handle(self):
         return self.member['twitter_account']

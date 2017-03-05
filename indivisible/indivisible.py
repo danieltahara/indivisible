@@ -41,6 +41,7 @@ def main():
 
 @app.route('/whatshot')
 def get_whats_hot():
+    cog = CongressGov()
     bills = cog.get_hot_bills()
     return render_template("whatshot.html", hot_bills=bills)
 

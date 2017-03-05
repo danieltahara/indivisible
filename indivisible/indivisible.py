@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 import os
 import json
 import re
+import requests
 from twilio.util import TwilioCapability
 from twilio import twiml
 from urlparse import urljoin
@@ -134,6 +135,11 @@ def get_on_the_issues(id):
         return response
     url = "http://www.ontheissues.org/{state}/{first_name}_{last_name}.htm" \
         .format(state=cp.get_state(), last_name=cp.get_last_name(), first_name=cp.get_first_name())
+    resp = requests.head(url)
+    if resp.status_code != 200:
+        url = "http://www.ontheissues.org/{chamber}/{first_name}_{last_name}.htm" \
+            .format(chamber=cp.get_chamber(), last_name=cp.get_last_name(),
+                    first_name=cp.get_first_name())
     return redirect(url, 302)
 
 

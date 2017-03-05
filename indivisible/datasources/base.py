@@ -23,6 +23,7 @@ class BeautifulSoupSource(object):
         soup = BeautifulSoup(opener.open(request), "html.parser")
         return soup
 
+
 class XMLSource(object):
 
     def __init__(self, base_url):

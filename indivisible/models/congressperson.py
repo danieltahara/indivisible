@@ -103,13 +103,14 @@ class Congressperson(db.Model):
         return self.id
 
     def get_last_name(self):
-        return self.last_name
+        parts = self.last_name.split(" ")
+        return parts[0]
 
     def get_first_name(self):
         return self.first_name
 
     def get_name(self):
-        return " ".join([self.get_first_name(), self.get_last_name()])
+        return " ".join([self.first_name, self.last_name])
 
     def get_image_url(self):
         if self.image is None:

@@ -10,8 +10,8 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      <div class="row"><h2>{{member.get_name()|safe}}</h2></div>
-      <div class="member-profile row">
+      <div class="row col-md-12"><h3>{{member.get_name()|safe}}</h3></div>
+      <div class="row member-profile">
         {{ macros.render_member(member) }}
       </div>
       <ul class="nav nav-tabs">

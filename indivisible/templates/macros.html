@@ -12,61 +12,61 @@
 {% macro render_member(member) -%}
 {% if member.get_image_url() -%}
 <div class="col-md-4">
-  <img class="img-responsive" src={{member.get_image_url()}} alt={{member.get_name()|safe}}>
+  <div class="row col-md-12">
+    <img class="img-responsive" src={{member.get_image_url()}} alt={{member.get_name()|safe}}>
+  </div>
 </div>
 <div class="col-md-8">
 {% else %}
 <div class="col-md-12">
 {% endif %}
-  <div class="row">
-    <div class="col-md-3">Name</div>
-    <div class="col-md-9">{{member.get_name()}}</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">State</div>
-    <div class="col-md-9">{{member.get_state()}}</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">District</div>
-    <div class="col-md-9">{{member.get_district()}}</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Chamber</div>
-    <div class="col-md-9">{{member.get_chamber()}}</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Party</div>
-    <div class="col-md-9">{{member.get_party()}}</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Website</div>
-    <div class="col-md-9"><a href={{member.get_website()}}>{{member.get_website()}}</a></div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Committees</div>
-    <div class="col-md-9">
-      {% for c in member.get_committees() -%}
-      <div class="row"><div class="col-md-12">
-          <a href={{url_for('get_committee', chamber=member.get_chamber(),
-            code=c['code'])}}>{{c['name']|safe}}</a>
-      </div></div>
-      {%- endfor %}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Voting Record</div>
-    <div class="col-md-9"><a href={{url_for('get_on_the_issues', id=member.id)}}>
-        See {{member.get_last_name()}} on the issues</a>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Party-Line Votes</div>
-    <div class="col-md-9">{{member.get_party_line_votes()}}%</div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">Missed Votes</div>
-    <div class="col-md-9">{{member.get_missed_votes()}}%</div>
-  </div>
+  <table class="table">
+    <tr>
+      <td>State</td>
+      <td>{{member.get_state()}}</td>
+    </tr>
+    <tr>
+      <td>District</td>
+      <td>{{member.get_district()}}</td>
+    </tr>
+    <tr>
+      <td>Chamber</td>
+      <td>{{member.get_chamber()}}</td>
+    </tr>
+    <tr>
+      <td>Party</td>
+      <td>{{member.get_party()}}</td>
+    </tr>
+    <tr>
+      <td>Website</td>
+      <td><a href={{member.get_website()}}>{{member.get_website()}}</a></td>
+    </tr>
+    <tr>
+      <td>Committees</td>
+      <td>
+        {% for c in member.get_committees() -%}
+        <div class="row"><div class="col-md-12">
+            <a href={{url_for('get_committee', chamber=member.get_chamber(),
+              code=c['code'])}}>{{c['name']|safe}}</a>
+        </div></div>
+        {%- endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td>Voting Record</td>
+      <td><a href={{url_for('get_on_the_issues', id=member.id)}}>
+          See {{member.get_last_name()}} on the issues</a>
+      </td>
+    </tr>
+    <tr>
+      <td>Party-Line Votes</td>
+      <td>{{member.get_party_line_votes()}}%</td>
+    </tr>
+    <tr>
+      <td>Missed Votes</td>
+      <td>{{member.get_missed_votes()}}%</td>
+    </tr>
+  </table>
 </div>
 {%- endmacro %}
 

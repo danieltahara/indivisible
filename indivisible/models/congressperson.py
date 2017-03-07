@@ -3,7 +3,7 @@ import feedparser
 import hashlib
 import json
 from six.moves.html_parser import HTMLParser
-import sqlalchemy
+from sqlalchemy.exc import IntegrityError
 
 from committee import Committee
 from database import db
@@ -179,8 +179,9 @@ class Congressperson(db.Model):
                 db.session.add(office)
                 try:
                     db.session.commit()
-                except sqlalchemy.IntegrityError as e: # FIXME: e.g. Eliot Engel
+                except IntegrityError as e: # FIXME: e.g. Eliot Engel
                     print e
+                    db.session.rollback()
         return offices
 
 

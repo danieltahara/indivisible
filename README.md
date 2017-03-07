@@ -11,6 +11,7 @@ https://www.indivisibleguide.com/). Data sources include:
 
 ## Setup:
 * You have python installed on your computer (comes by default), as well as the following libraries:
+
 On Linux:
 ~~~
 sudo apt-get install python-pip
@@ -37,9 +38,11 @@ pip install -r requirements.txt
 * Request an API key from [Event Registry](https://www.eventregistry.org)
 * Request an API key for the [Google Civic Information API](https://developers.google.com/civic-information)
 * [Optional] Request credentials from [Twilio](https://www.twilio.com/) and a phone number and [application sid](https://www.twilio.com/console/voice/dev-tools/twiml-apps):
-* Add the following to a file:
+* Add the following to a file (either name it `indivisible.cfg`, or modify the path in the
+  instructions below):
 ~~~
 PYTHONPATH=/path/to/repo/indivisible
+FLASK_DEBUG=1
 ~~~
 * Save the API keys to the same file:
 ~~~
@@ -50,28 +53,39 @@ GOOGLE_CIVIC_INFORMATION_API="PASTE_API_KEY_HERE"
 ~~~
 
 * Install DB of choice.
+
+On Linux:
 ~~~
 sudo apt-get install mysql-server
 sudo mysql_secure_installation
 mysqld --initialize
 ~~~
+On Mac OSX: using SQLite is easiest. If you don't already have SQLite:
+~~~
+brew install sqlite
+~~~
 
 * Add database URI to configs:
+
+For SQL:
 ~~~
 DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible?charset=utf8"
+~~~
+For SQLite (to write to a file in `/tmp`):
+~~~
+SQLALCHEMY_DATABASE_URI="sqlite:////tmp/indivisible.db"
 ~~~
 
 * Initialize DB (note SQLite doesn't allow key constraint changes, so you may have to delete those
   lines):
 ~~~
 pushd indivisible
-env $(cat ../indivisible.cfg | xargs) python manager.py db upgrade
+env $(cat ../indivisible.cfg | xargs) python manage.py db upgrade
 popd
 ~~~
 
 ## How to run:
 ~~~
-export FLASK_DEBUG=1
 env $(cat indivisible.cfg | xargs) python indivisible/indivisible.py
 ~~~
 

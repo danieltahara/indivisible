@@ -39,7 +39,7 @@
     </tr>
     <tr>
       <td>Website</td>
-      <td><a href={{member.get_website()}}>{{member.get_website()}}</a></td>
+      <td><a href={{member.get_website()}} target="_blank">{{member.get_website()}}</a></td>
     </tr>
     <tr>
       <td>Committees</td>
@@ -47,14 +47,14 @@
         {% for c in member.get_committees() -%}
         <div class="row"><div class="col-md-12">
             <a href={{url_for('get_committee', chamber=member.get_chamber(),
-              code=c['code'])}}>{{c['name']|safe}}</a>
+              code=c['code'])}} target="_blank">{{c['name']|safe}}</a>
         </div></div>
         {%- endfor %}
       </td>
     </tr>
     <tr>
       <td>Voting Record</td>
-      <td><a href={{url_for('get_on_the_issues', id=member.id)}}>
+      <td><a href={{url_for('get_on_the_issues', id=member.id)}} target="_blank">
           See {{member.get_last_name()}} on the issues</a>
       </td>
     </tr>
@@ -75,8 +75,8 @@
   <td>{{vote_json['date']}}</td>
   <td>
     <a href={{url_for('get_votes', congress=vote_json['congress'], chamber=vote_json['chamber'],
-      session=vote_json['session'],
-      roll_call=vote_json['roll_call'])}}>{{vote_json['question']}}</a>
+      session=vote_json['session'], roll_call=vote_json['roll_call'])}} target="_blank"
+      >{{vote_json['question']}}</a>
   </td>
   <td>{{vote_json['description']}}</td>
   {% if vote_json['position'] == 'Yes' -%}
@@ -92,7 +92,7 @@
   <td>{{news['eventDate']}}</td>
   <td>
     <div class="row"><div class="col-md-12">
-      <a href={{url_for('get_news', uri=news['uri'])}}>{{news['title']['eng']}}</a>
+      <a href={{url_for('get_news', uri=news['uri'])}} target="_blank">{{news['title']['eng']}}</a>
   </div></div>
   </td>
 </tr>
@@ -101,7 +101,7 @@
 {% macro render_rss(item) -%}
 <tr>
   <td>{{item['date']}}</td>
-  <td><a href={{item['link']}}>{{item['title']|safe}}</a></td>
+  <td><a href={{item['link']}} target="_blank">{{item['title']|safe}}</a></td>
   <td><div class="row" style="max-height:200px; overflow-y:hidden;">{{item['description']|safe}}</div></td>
 </tr>
 {%- endmacro %}
@@ -134,8 +134,8 @@
 {% macro render_statement(stmt) -%}
 <tr>
   <td>{{stmt['statement_date']}}</td>
-  <td><a
-      href="http://www.politifact.com/{{stmt['statement_url']}}">{{stmt['ruling_headline']}}</a>{{stmt['statement']|safe}}</td>
+  <td><a href="http://www.politifact.com/{{stmt['statement_url']}}" target="_blank"
+      >{{stmt['ruling_headline']}}</a>{{stmt['statement']|safe}}</td>
   <td>{{stmt['ruling_link_text']}}</td>
   <td><img class="img-responsive" src={{stmt['ruling']['canonical_ruling_graphic']}}
     alt={{stmt['ruling_headline']}} style="max-height:75px;"/></td>
@@ -146,14 +146,15 @@
 <tr>
   <td>{{event['date']}}</td>
   <td><a href={{url_for('get_committee', chamber=event['chamber'],
-      code=event['committee_code'])}}>{{event['committee']}}</a></td>
-  <td><a href={{event['url']}}>{{event['name']}}</a></td>
+      code=event['committee_code'])}} target="_blank">{{event['committee']}}</a></td>
+  <td><a href={{event['url']}} target="_blank">{{event['name']}}</a></td>
 </tr>
 {%- endmacro %}
 
 {% macro render_bill(bill) -%}
 <tr>
-  <td><a href={{url_for('get_bill', congress=bill['congress'], number=bill['number'])}}>
+  <td><a href={{url_for('get_bill', congress=bill['congress'], number=bill['number'])}}
+      target="_blank">
     {{bill['number']}}</a></td>
   <td>{{bill['title']}}</td>
   <td>{{bill['latest_major_action']}}</td>

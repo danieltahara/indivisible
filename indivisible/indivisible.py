@@ -124,7 +124,7 @@ def get_member(id):
 
 
 @app.route('/members/<id>/politifact')
-def get_politifact(last_name, first_name):
+def get_politifact(id):
     cp = Congressperson.get_or_create(id)
     if cp is None:
         response = jsonify({"error": "Missing capability"})

@@ -63,8 +63,11 @@ def search_members():
     address = request.args.get('address', None)
     if address:
         state, district = cg.lookup_congressional_district(address)
-        members = cg.search_members(chamber=cg.SENATE, state=state)
-        members.extend(cg.search_members(chamber=cg.HOUSE, state=state, district=district))
+        if state is not None:
+            members = cg.search_members(chamber=cg.SENATE, state=state)
+            members.extend(cg.search_members(chamber=cg.HOUSE, state=state, district=district))
+        else:
+            members = []
     else:
         name = request.args.get('name', None)
         chamber = request.args.get('chamber', None)

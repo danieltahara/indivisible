@@ -21,10 +21,10 @@ class GoogleCivicInformation(JSONSource):
             "key": self.key,
         }
         results = self._get("representatives", params=params)
-        if results:
+        print results
+        if results and 'error' not in results:
             district_regex = r"ocd-division/country:us/state:([a-zA-Z]{2})/cd:(\d{2})"
             for k in results["divisions"].iterkeys():
-                print k
                 matches = re.findall(district_regex, k)
                 if len(matches) < 1:
                     continue
@@ -32,4 +32,4 @@ class GoogleCivicInformation(JSONSource):
                 state = us.states.lookup(state).name
                 district = int(matches[0][1])
                 return (state, district)
-            return (None, None)
+        return (None, None)

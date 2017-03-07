@@ -3,6 +3,7 @@ import feedparser
 import hashlib
 import json
 from six.moves.html_parser import HTMLParser
+import sqlalchemy
 
 from committee import Committee
 from database import db
@@ -176,7 +177,10 @@ class Congressperson(db.Model):
                 office = Office(**office_dict)
                 offices.append(office)
                 db.session.add(office)
-            db.session.commit()
+                try:
+                    db.session.commit()
+                except sqlalchemy.IntegrityError as e: # FIXME: e.g. Eliot Engel
+                    print e
         return offices
 
 

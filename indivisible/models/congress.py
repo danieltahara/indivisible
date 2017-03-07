@@ -20,7 +20,7 @@ class Congress(db.Model):
     HOUSE = 'house'
 
     @classmethod
-    def initialize_datasources(cls, pp, er, gpo, pf, dhg, sg):
+    def initialize_datasources(cls, pp, er, gpo, pf, dhg, sg, gci):
         """
         Initialize class with the following datasources:
             * ProPublica
@@ -36,6 +36,7 @@ class Congress(db.Model):
         cls.pf = pf
         cls.dhg = dhg
         cls.sg = sg
+        cls.gci = gci
 
     @classmethod
     def get_or_create(cls, congress):
@@ -92,6 +93,15 @@ class Congress(db.Model):
         @param district: congressional district
         """
         return self.search_members(chamber=self.HOUSE, state=state, district=district)
+
+    def lookup_congressional_district(self, address):
+        """
+        Get congressional district for address
+
+        @param address: string address
+        @return: (state, district number) or None
+        """
+        return self.gci.lookup_congressional_district(address)
 
     def search_members(self, name=None, chamber=None, state=None, district=None):
         """

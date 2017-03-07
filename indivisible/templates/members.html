@@ -4,26 +4,37 @@
 {{ super() }}
 <div class="container" id="members">
   <div class="row"><div class="col-md-12"><h2>Find Your Representatives:</h2></div></div>
+  <div class="row col-md-12">
+    <h3>By Address:</h3>
+  </div>
   <div class="row">
-    <div class="col-md-2"><input class="form-control search" placeholder="Search by Name" /></div>
-    <div class="col-md-2">
+    <form action="/members/search" method="get">
+      <div class="col-md-6">
+        <input class="form-control" name="address" placeholder="Search by Address" /></div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="row col-md-12">
+    <h3>By Name or District:</h3>
+  </div>
+  <div class="row">
+    <div class="col-md-3"><input class="form-control search" placeholder="Search by Name" /></div>
+    <div class="col-md-3">
       <select class="form-control chamber_s">
         <option selected value> -- Select a Chamber -- </option>
         <option value="Senate">Senate</option>
         <option value="House">House</option>
       </select>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
       <select class="form-control state_s">
         <option selected value> -- Select a State -- </option>
         {% for state in all_states %}
         <option value="{{state.abbr}}">{{state.name}}</option>
         {% endfor %}
       </select>
-    </div>
-    <div class="col-md-2"><input class="form-control district_s" placeholder="District" /></div>
-    <div class="col-md-2 col-md-push-2">
-      <button type="button" class="btn btn-primary sort" data-sort="name">Sort by name</button>
     </div>
   </div>
 

@@ -18,6 +18,7 @@ import us
 from datasources.congressgov import CongressGov
 from datasources.docshousegov import DocsHouseGov
 from datasources.eventregistry2 import EventRegistry2
+from datasources.googlecivicinformation import GoogleCivicInformation
 from datasources.governmentpublishingoffice import GovernmentPublishingOffice
 from datasources.politifact import Politifact
 from datasources.propublica import ProPublica
@@ -59,12 +60,18 @@ def get_members():
 
 @app.route('/members/search')
 def search_members():
-    name = request.args.get('name', None)
-    chamber = request.args.get('chamber', None)
-    state = request.args.get('state', None)
-    district = request.args.get('district', None)
-    members = cg.search_members(name=name, chamber=chamber, state=state, district=district)
-    return render_template('members_search.html', members=members)
+    address = request.args.get('address', None)
+    if address:
+        state, district = cg.lookup_congressional_district(address)
+        members = cg.search_members(chamber=cg.SENATE, state=state)
+        members.extend(cg.search_members(chamber=cg.HOUSE, state=state, district=district))
+    else:
+        name = request.args.get('name', None)
+        chamber = request.args.get('chamber', None)
+        state = request.args.get('state', None)
+        district = request.args.get('district', None)
+        members = cg.search_members(name=name, chamber=chamber, state=state, district=district)
+    return render_template('members_search.html', members=members, args=request.args)
 
 @app.route('/members/token', methods=['GET'])
 def get_token():
@@ -188,6 +195,7 @@ def initialize_app(app):
 
     ProPublica.initialize(os.environ['PROPUBLICA_API_KEY'])
     EventRegistry2.initialize(os.environ['EVENT_REGISTRY_API_KEY'])
+    GoogleCivicInformation.initialize(os.environ['GOOGLE_CIVIC_INFORMATION_API_KEY'])
 
     pp = ProPublica()
     er = EventRegistry2()
@@ -196,9 +204,10 @@ def initialize_app(app):
     dhg = DocsHouseGov()
     sg = SenateGov()
     pf = Politifact()
+    gci = GoogleCivicInformation()
 
     Committee.initialize_datasources(pp)
-    Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg)
+    Congress.initialize_datasources(pp, er, gpo, pf, dhg, sg, gci)
     Congressperson.initialize_datasources(pp, er, gpo, pf, None)
     global cg
     cg = Congress.get_or_create(115)

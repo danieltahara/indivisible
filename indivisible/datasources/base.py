@@ -48,10 +48,8 @@ class JSONSource(object):
 
     def _get(self, path, params={}, headers={}):
         url = urljoin(self.base_url, path)
-        if len(params) > 0:
-            url = url % urllib.urlencode(params)
-        print url
-        resp = requests.get(url, headers=headers)
+        resp = requests.get(url, params=params, headers=headers)
+        print resp.url
         if resp.status_code != 200:
             return None
         else:

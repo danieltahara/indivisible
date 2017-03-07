@@ -35,6 +35,7 @@ pip install -r requirements.txt
 
 * Request an API key from [ProPublica](https://www.propublica.org/datastore/api/propublica-congress-api)
 * Request an API key from [Event Registry](https://www.eventregistry.org)
+* Request an API key for the [Google Civic Information API](https://developers.google.com/civic-information)
 * [Optional] Request credentials from [Twilio](https://www.twilio.com/) and a phone number and [application sid](https://www.twilio.com/console/voice/dev-tools/twiml-apps):
 * Add the following to a file:
 ~~~
@@ -44,6 +45,7 @@ PYTHONPATH=/path/to/repo/indivisible
 ~~~
 PROPUBLICA_API_KEY="PASTE_API_KEY_HERE"
 EVENT_REGISTRY_API_KEY="PASTE_API_KEY_HERE"
+GOOGLE_CIVIC_INFORMATION_API="PASTE_API_KEY_HERE"
 ...
 ~~~
 
@@ -59,7 +61,8 @@ mysqld --initialize
 DB_ADDR="mysql+pymysql://USER:PASSWORD@localhost/indivisible?charset=utf8"
 ~~~
 
-* Initialize DB:
+* Initialize DB (note SQLite doesn't allow key constraint changes, so you may have to delete those
+  lines):
 ~~~
 pushd indivisible
 env $(cat ../indivisible.cfg | xargs) python manager.py db upgrade

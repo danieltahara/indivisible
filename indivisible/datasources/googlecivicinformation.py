@@ -21,7 +21,6 @@ class GoogleCivicInformation(JSONSource):
             "key": self.key,
         }
         results = self._get("representatives", params=params)
-        print results
         if results and 'error' not in results:
             district_regex = r"ocd-division/country:us/state:([a-zA-Z]{2})/cd:(\d{2})"
             for k in results["divisions"].iterkeys():

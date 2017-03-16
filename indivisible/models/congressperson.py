@@ -55,7 +55,7 @@ class Congressperson(db.Model):
             'congress': member['roles'][0]['congress'],
             'chamber': member['roles'][0]['chamber'],
             'state': member['roles'][0]['state'],
-            'district': member['roles'][0]['district'],
+            'district': member['roles'][0].get('district', None),
             'member_json': json.dumps(member),
         }
         md5 = hashlib.md5()

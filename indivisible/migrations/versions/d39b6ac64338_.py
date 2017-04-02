@@ -45,7 +45,8 @@ def upgrade():
     sa.Column('member_json', sa.String(length=8192), nullable=False),
     sa.Column('member_hash', sa.String(length=32), nullable=False),
     sa.Column('last_updated', sa.DateTime(), server_default=sa.text(u'CURRENT_TIMESTAMP'), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.ForeignKeyConstraint(['congress'], ['congress.congress'])
     )
     # ### end Alembic commands ###
 

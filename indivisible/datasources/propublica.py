@@ -121,7 +121,7 @@ class ProPublica(JSONSource):
         if results['status'] == 'ERROR' or results['status'] == '404':
             return None
         else:
-            return results['results']
+            return results.get('results', None)
 
     def _get_base_headers(self):
         return {
